@@ -1,0 +1,45 @@
+{
+  "name": "rpc-ws",
+  "version": "1.0.0",
+  "license": "WTFPL",
+  "scripts": {
+    "build": "yarn clean && yarn proto && yarn browser-cjs && yarn browser-esm",
+    "browser-cjs": "yarn browser --out-dir browser/cjs",
+    "browser-esm": "ESM=1 yarn browser --out-dir browser/esm",
+    "browser-watch": "yarn browser-cjs --watch",
+    "browser": "babel --ignore src/server --ignore src/node.js src",
+    "clean": "rm -rf browser",
+    "proto": "pbf src/common/encoders/protobuf/rpc.proto > src/common/encoders/protobuf/rpc.js"
+  },
+  "main": "src/node.js",
+  "browser": {
+    ".": "./browser/cjs",
+    "./encoders/json": "./browser/cjs/common/encoders/json",
+    "./encoders/protobuf": "./browser/cjs/common/encoders/protobuf"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.4.5",
+    "nanoevents": "^1.0.8",
+    "nanoid": "^2.0.3",
+    "ws": "^7.0.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "pbf": "^3.2.0",
+    "utf-8-validate": "^5.0.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "@babel/plugin-proposal-private-methods": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "caniuse-api": "^3.0.0"
+  }
+}

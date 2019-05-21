@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+message Packet {
+  uint32 jsonrpc = 1;
+  repeated Message msgs = 2;
+}
+
+message Message {
+  string method = 1;
+  Id id = 2;
+  bytes params = 3;
+//  oneof res {
+    bytes result = 4;
+    Error error = 5;
+//  }
+}
+
+message Error {
+  sint32 code = 1;
+  string message = 2;
+  bytes data = 3;
+}
+
+message Id {
+  oneof type {
+    NullValue null = 1;
+    uint64 num = 2;
+    double double = 3;
+    string str = 4;
+  }
+}
+
+enum NullValue {
+  NULL_VALUE = 0;
+}
