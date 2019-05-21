@@ -51,6 +51,10 @@ export default class Client {
     this.#wsc.connect()
   }
 
+  get connected() {
+    return this.#wsc.connected
+  }
+
   async call(method, ...args) {
     const id = ++this.#callLastId
     const call = new TimeoutCall(this.#cfg.timeout)
