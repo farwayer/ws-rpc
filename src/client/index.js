@@ -34,7 +34,7 @@ export default class Client {
     Object.assign(this.#cfg, cfg)
 
     this.#cfg.encoders = this.#cfg.encoders.reduce((res, enc) => {
-      res[enc.constructor.name] = enc
+      res[enc.name] = enc
       return res
     }, {})
 

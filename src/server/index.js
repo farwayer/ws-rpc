@@ -26,7 +26,7 @@ module.exports = class Server {
     Object.assign(this.#cfg, cfg)
 
     this.#cfg.encoders = this.#cfg.encoders.reduce((res, enc) => {
-      res[enc.constructor.name] = enc
+      res[enc.name] = enc
       return res
     }, {})
 
@@ -96,7 +96,7 @@ module.exports = class Server {
   }
 
   _handleProtocols = (protocols, req) => {
-    return RpcPrefix + req.ctx.encoder.constructor.name
+    return RpcPrefix + req.ctx.encoder.name
   }
 
   _connection = (ws, req) => {
@@ -268,11 +268,10 @@ function send(ws, data) {
 class SendError extends Error {}
 class EncodeError extends Error {
   constructor(encoder, message, msgs, opt) {
-    encoder = encoder.constructor.name
     if (message instanceof Error) message = message.message
-    message = `<${encoder} encoder> ${message}`
+    message = `<${encoder.name} encoder> ${message}`
     super(message)
-    this.encoder = encoder
+    this.encoder = encoder.name
     this.msgs = msgs
     this.opt = opt
   }

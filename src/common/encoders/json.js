@@ -1,8 +1,5 @@
-const Encoder = require('./encoder')
-
-
-module.exports = class JsonEncoder extends Encoder {
-  static name = 'json'
+module.exports = class JsonEncoder {
+  name = 'json'
 
   encode(msgs) {
     return JSON.stringify(msgs)

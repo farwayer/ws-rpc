@@ -1,10 +1,9 @@
 const Pbf = require('pbf')
 const {Packet, NullValue} = require('./rpc')
-const Encoder = require('../encoder')
 
 
-module.exports = class ProtobufEncoder extends Encoder {
-  static name = 'protobuf'
+module.exports = class ProtobufEncoder {
+  name = 'protobuf'
 
   encode(msgs) {
     if (!Array.isArray(msgs)) msgs = [msgs]
