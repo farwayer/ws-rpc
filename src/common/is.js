@@ -5,7 +5,7 @@ module.exports = {
   object: isType('object'),
   array: val => Array.isArray(val),
   defined: val => val !== undefined,
-  null: val => val === undefined,
+  null: val => val === null,
   integer: val => Number.isInteger(val),
 }
 
