@@ -1,7 +1,7 @@
 const caniuse  = require('caniuse-api')
 
 
-const esm = process.env.ESM ? {modules: false} : {};
+const esm = process.env.ESM ? {modules: false} : {}
 const wsSupport = Object.entries(caniuse.getSupport('websocket'))
   .filter(([_, {y}]) => y)
   .map(([name, {y}]) => `${name} >= ${y}`)
