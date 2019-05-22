@@ -47,7 +47,7 @@ export default class Client {
     this.#wsc.on(WSEvents.Close, this.#reemit(Events.Disconnected))
     this.#wsc.on(WSEvents.Message, this.#reemit(Events.Message))
     this.#wsc.on(WSEvents.Open, this.#setEncoder)
-    this.#wsc.on(WSEvents.Message, this.#msg)
+    this.#wsc.on(WSEvents.Message, this.#process)
     this.#wsc.connect()
   }
 
@@ -95,11 +95,24 @@ export default class Client {
     }
   }
 
-  #msg = async msg => {
+  #process = async msgs => {
     try {
-      msg = await this.#encoder.decode(msg)
+      msgs = await preprocessMessage(msgs)
+      msgs = await this.#encoder.decode(msgs)
+    } catch (e) {
+      console.warn("server decode error", e)
+      return
+    }
+
+    if (!is.array(msgs)) msgs = [msgs]
+    msgs.forEach(this.#msg)
+  }
+
+  #msg = msg => {
+    try {
       msg = msgParse(msg)
     } catch (e) {
+      console.warn("message parse error", e)
       return
     }
 
@@ -160,4 +173,16 @@ class TimeoutCall {
   clean() {
     clearTimeout(this.#timer)
   }
+}
+
+function preprocessMessage(msg) {
+  return new Promise(resolve => {
+    if (!(msg instanceof Blob)) {
+      return resolve(msg)
+    }
+
+    const reader = new FileReader()
+    reader.addEventListener('load', e => resolve(e.target.result))
+    reader.readAsArrayBuffer(msg)
+  })
 }
