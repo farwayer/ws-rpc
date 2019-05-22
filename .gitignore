@@ -1,4 +1,5 @@
 .idea/
 node_modules/
 browser/
+src/common/encoders/protobuf/rpc.js
 yarn-error.log
