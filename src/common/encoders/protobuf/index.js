@@ -1,7 +1,10 @@
 const Pbf = require('pbf')
 const {Packet, Null} = require('./rpc')
 const is = require('../../is')
+const {RpcPrefix} = require('../../const')
 
+
+const EmptyMethod = RpcPrefix + 'empty'
 
 module.exports = {
   name: 'protobuf',
@@ -9,7 +12,7 @@ module.exports = {
   encode(msgs) {
     if (!Array.isArray(msgs)) msgs = [msgs]
 
-    const jsonrpc = numVersion(msgs[0].jsonrpc)
+    const jsonrpc = encodeVersion(msgs[0].jsonrpc)
     msgs = msgs.map(encodeMessage)
     const data = {jsonrpc, msgs}
 
@@ -22,31 +25,58 @@ module.exports = {
     const pbf = new Pbf(packet)
     let {jsonrpc, msgs} = Packet.read(pbf)
 
-    jsonrpc = strVersion(jsonrpc)
+    jsonrpc = decodeVersion(jsonrpc)
     msgs.forEach(decodeMessage.bind(this, jsonrpc))
 
     return msgs
   },
 }
 
+function encodeVersion(jsonrpc) {
+  return +jsonrpc * 10 - 20
+}
+
+function decodeVersion(jsonrpc) {
+  jsonrpc += 20
+  return `${~~(jsonrpc / 10)}.${jsonrpc % 10}`
+}
+
 function encodeMessage(msg) {
   return {
-    method: msg.method,
+    method: encodeMethod(msg.method),
     id: encodeValue(msg.id),
     params: encodeValue(msg.params),
     result: encodeValue(msg.result),
-    error: msg.error && {...msg.error, data: encodeValue(msg.error.data)},
+    error: encodeError(msg.error),
   }
 }
 
 function decodeMessage(jsonrpc, msg) {
   msg.jsonrpc = jsonrpc
+  msg.method = decodeMethod(msg.method)
   msg.id = decodeValue(msg.id)
   msg.params = decodeValue(msg.params)
   msg.result = decodeValue(msg.result)
-  msg.error = !is.null(msg.error)
-    ? {...msg.error, data: decodeValue(msg.error.data)}
-    : undefined
+  msg.error = decodeError(msg.error)
+}
+
+function encodeMethod(method) {
+  return method === '' ? EmptyMethod : method
+}
+
+function decodeMethod(method) {
+  if (method === '') return
+  return method === EmptyMethod ? '' : method
+}
+
+function encodeError(error) {
+  if (!error) return
+  return {...error, data: encodeValue(error.data)}
+}
+
+function decodeError(error) {
+  if (!error) return
+  return {...error, data: decodeValue(error.data)}
 }
 
 function encodeValue(val) {
@@ -89,13 +119,4 @@ function decodeValue(val) {
       }, {})
     default: return val[type]
   }
-}
-
-function numVersion(jsonrpc) {
-  return +jsonrpc * 10 - 20
-}
-
-function strVersion(jsonrpc) {
-  jsonrpc += 20
-  return `${~~(jsonrpc / 10)}.${jsonrpc % 10}`
 }
