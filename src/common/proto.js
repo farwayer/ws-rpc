@@ -37,6 +37,10 @@ function msgParse(msg) {
     return {type: MsgType.Error, id, error}
   }
 
+  if (!is.defined(method)) {
+    throw msgErr(Errors.NoMethodResultError, id)
+  }
+
   if (!is.string(method)) {
     throw msgErr(Errors.MethodMustBeString, id)
   }

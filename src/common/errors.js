@@ -22,4 +22,5 @@ module.exports = Object.assign(Errors, {
   Encoding: {...Errors.InternalError, data: "encoding error"},
   ResponseToServer: {...Errors.InvalidRequest, data: "client must not send response message to server"},
   ErrorToServer: {...Errors.InvalidRequest, data: "client must not send error message to server"},
+  NoMethodResultError: {...Errors.InvalidRequest, data: "at least one of method, result or error field must be set"},
 })
