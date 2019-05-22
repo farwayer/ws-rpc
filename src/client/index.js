@@ -1,12 +1,13 @@
 import NanoEvents from 'nanoevents'
-import WSClient from './wsc'
+import WSClient, {WSEvents} from 'wscl'
 import {msgParse, makeParams, msgSetVersion, MsgType} from '../common/proto'
 import {RpcPrefix} from '../common/const'
 import is from '../common/is'
 import JsonEncoder from '../common/encoders/json'
-import {DefaultTimeout, WSEvents} from './const'
 import {RpcError, TimeoutError} from './errors'
 
+
+const DefaultTimeout = 5000
 
 export {RpcError, TimeoutError}
 

@@ -2293,6 +2293,14 @@ ws@^7.0.0:
   dependencies:
     async-limiter "^1.0.0"
 
+wscl@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/wscl/-/wscl-1.0.1.tgz#4d0cdb1cff8198fc384b94eb5bc07f46ea771cdb"
+  integrity sha512-q6KIdJZ+5i7nr9LkUP3+dPjGKXGcE2hs/QhX1ywDTPaFz7MgJmga2amyzBwrFPzlEuUWYCtjTMbQ0jQ/31mkIg==
+  dependencies:
+    "@babel/runtime" "^7.4.5"
+    nanoevents "^1.0.8"
+
 yallist@^3.0.0, yallist@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-3.0.3.tgz#b4b049e314be545e3ce802236d6cd22cd91c3de9"

@@ -24,7 +24,8 @@
     "@babel/runtime": "^7.4.5",
     "nanoevents": "^1.0.8",
     "nanoid": "^2.0.3",
-    "ws": "^7.0.0"
+    "ws": "^7.0.0",
+    "wscl": "^1.0.1"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.1",
