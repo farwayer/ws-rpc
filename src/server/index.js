@@ -14,11 +14,10 @@ module.exports = class Server {
   #emitter = new NanoEvents()
   #rpc = {}
   #clients = {}
-  #jsonEncoder = new JsonEncoder()
   #cfg = {
     pingInterval: DefaultPingInterval,
     encoders: [
-      this.#jsonEncoder,
+      JsonEncoder,
     ],
   }
 
@@ -71,7 +70,8 @@ module.exports = class Server {
 
     const success = await Promise.all(clients.map(async ctx => {
       try {
-        await this._send(ctx, {method: name, params})
+        const msg = {method: name, params}
+        await this._send(ctx, msg)
         return true
       } catch (e) {
         return false
@@ -112,9 +112,10 @@ module.exports = class Server {
     try {
       msgs = await ctx.encoder.decode(msgs, ctx)
     } catch (e) {
-      // decoding error send json response to simplify debugging
+      // decoding error, send json response to simplify debugging
       const resp = msgErr({...Errors.ParseError, data: e.message})
-      return this._sendResponse(ctx, resp, {json: true})
+      const opts = {json: true}
+      return this._sendResponse(ctx, resp, opts)
     }
 
     if (!is.object(msgs)) {
@@ -196,10 +197,10 @@ module.exports = class Server {
   async _send(ctx, msgs, opt = {}) {
     msgSetVersion(msgs)
 
-    const encoder = opt.json ? this.#jsonEncoder : ctx.encoder
+    const encoder = opt.json ? JsonEncoder : ctx.encoder
 
     try {
-      msgs = await encoder.encode(msgs, ctx)
+      msgs = await encoder.encode(msgs)
     } catch (e) {
       throw new EncodeError(encoder, e.message, msgs, opt)
     }

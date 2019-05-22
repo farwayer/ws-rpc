@@ -22,11 +22,10 @@ export default class Client {
   #calls = {}
   #callLastId = 0
   #encoder
-  #jsonEncoder = new JsonEncoder()
   #cfg = {
     timeout: DefaultTimeout,
     encoders: [
-      this.#jsonEncoder,
+      JsonEncoder,
     ],
   }
 
