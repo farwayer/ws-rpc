@@ -71,7 +71,7 @@ module.exports = class Server {
     const success = await Promise.all(clients.map(async ctx => {
       try {
         const msg = {method: name, params}
-        await this._send(ctx, msg)
+        await send(ctx, msg)
         return true
       } catch (e) {
         return false
@@ -184,31 +184,13 @@ module.exports = class Server {
 
   async _sendResponse(ctx, msgs, opt) {
     try {
-      await this._send(ctx, msgs, opt)
+      await send(ctx, msgs, opt)
     } catch (e) {
       if (e instanceof SendError) return
       if (e instanceof EncodeError) {
         this._sendEncodeError(ctx, e)
       }
       throw e
-    }
-  }
-
-  async _send(ctx, msgs, opt = {}) {
-    msgSetVersion(msgs)
-
-    const encoder = opt.json ? JsonEncoder : ctx.encoder
-
-    try {
-      msgs = await encoder.encode(msgs)
-    } catch (e) {
-      throw new EncodeError(encoder, e.message, msgs, opt)
-    }
-
-    try {
-      await send(ctx.ws, msgs)
-    } catch (e) {
-      new SendError(e.message)
     }
   }
 
@@ -243,7 +225,7 @@ Try to set encoder in options or with '?encoders=protobuf,json,...' query.`)
       : msgErr(error)
 
     try {
-      await this._send(ctx, msgs, opt)
+      await send(ctx, msgs, opt)
     } catch (e) {
       if (e instanceof SendError) return
       throw e
@@ -251,7 +233,25 @@ Try to set encoder in options or with '?encoders=protobuf,json,...' query.`)
   }
 }
 
-function send(ws, data) {
+async function send(ctx, msgs, opt = {}) {
+  msgSetVersion(msgs)
+
+  const encoder = opt.json ? JsonEncoder : ctx.encoder
+
+  try {
+    msgs = await encoder.encode(msgs)
+  } catch (e) {
+    throw new EncodeError(encoder, e.message, msgs, opt)
+  }
+
+  try {
+    await socketSend(ctx.ws, msgs)
+  } catch (e) {
+    new SendError(e.message)
+  }
+}
+
+function socketSend(ws, data) {
   return new Promise((resolve, reject) => {
     const error = e => {
       ws.terminate()
