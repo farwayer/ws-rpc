@@ -177,7 +177,7 @@ module.exports = class Server {
 
       return msgErr({
         ...Errors.InternalError,
-        data: `server throws error with non-integer code ${error.code}`,
+        data: `server throws error with non-integer code ${e.code}`,
       }, id)
     }
   }
