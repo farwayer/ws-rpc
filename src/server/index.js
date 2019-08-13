@@ -200,6 +200,7 @@ module.exports = class Server {
     let encoders = req.headers[ProtocolsHeader]
     encoders = encoders ? encoders.split(',') : []
     encoders = encoders
+      .map(enc => enc.trim())
       .filter(enc => enc.startsWith(RpcPrefix))
       .map(enc => enc.split('.')[1])
     encoders.push(JsonEncoder.name)
@@ -211,7 +212,7 @@ module.exports = class Server {
     throw new Error(`No suitable encoder found.
 Requested encoders: ${encoders.join(', ')}.
 Encoders supported by server: ${Object.keys(this.#cfg.encoders).join(', ')}.
-Try to set encoder in options or with '?encoders=protobuf,json,...' query.`)
+Try to set encoder in options or with 'sec-websocket-protocol: rpc.protobuf, rpc.json' header.`)
   }
 
   async _sendEncodeError(ctx, e) {
