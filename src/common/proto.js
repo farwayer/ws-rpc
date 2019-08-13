@@ -7,7 +7,7 @@ function msgParse(msg) {
   const {jsonrpc, id, method, params, error, result} = msg
   const hasId = is.defined(id)
 
-  if (hasId && !is.string(id) && !is.number(id) && is.null(id)) {
+  if (hasId && !is.string(id) && !is.number(id) && !is.null(id)) {
     throw msgErr(Errors.InvalidId, id)
   }
 
