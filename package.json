@@ -2,6 +2,8 @@
   "name": "rpc-ws",
   "version": "1.0.0",
   "license": "WTFPL",
+  "author": "farwayer <farwayer@gmail.com>",
+  "repository": "farwayer/rpc-ws",
   "scripts": {
     "build": "yarn clean && yarn proto && yarn browser-cjs && yarn browser-esm",
     "browser-cjs": "yarn browser --out-dir browser/cjs",
