@@ -1,6 +1,5 @@
 module.exports = {
   RpcPrefix: 'rpc.',
-  ProtocolsHeader: 'sec-websocket-protocol',
   Protocol: '2.0',
   MsgType: {
     Request: 1,

@@ -4,9 +4,14 @@ const Context = require('./context')
 const JsonEncoder = require('../common/encoders/json')
 const is = require('../common/is')
 const Errors = require('../common/errors')
-const {msgParse, msgSetVersion, msgErr, makeParams, MsgType} = require('../common/proto')
-const {ProtocolsHeader, RpcPrefix} = require('../common/const')
-const {WSEvents, AllClients, HttpPreconditionFailed, DefaultPingInterval} = require('./const')
+const {
+  msgParse, msgSetVersion, msgErr, makeParams, MsgType,
+} = require('../common/proto')
+const {RpcPrefix} = require('../common/const')
+const {
+  WSEvents, ProtocolsHeader, AllClients, HttpPreconditionFailed,
+  DefaultPingInterval,
+} = require('./const')
 
 
 module.exports = class Server {
