@@ -4,14 +4,9 @@ const Context = require('./context')
 const JsonEncoder = require('../common/encoders/json')
 const is = require('../common/is')
 const Errors = require('../common/errors')
-const {
-  msgParse, msgSetVersion, msgErr, makeParams, MsgType,
-} = require('../common/proto')
+const {msgParse, msgSetVersion, msgErr, makeParams, MsgType} = require('../common/proto')
 const {RpcPrefix} = require('../common/const')
-const {
-  WSEvents, ProtocolsHeader, AllClients, HttpPreconditionFailed,
-  DefaultPingInterval,
-} = require('./const')
+const {WSEvents, ProtocolsHeader, HttpPreconditionFailed, DefaultPingInterval} = require('./const')
 
 
 module.exports = class Server {
@@ -54,26 +49,23 @@ module.exports = class Server {
 
   async emit(clients, name, ...args) {
     if (!is.string(name)) {
-      throw new Error("event name must be strings")
+      throw new Error("event name must be string")
     }
 
     const isBatch = is.array(clients)
-    if (!is.array(clients)) clients = [clients]
+    if (!isBatch) clients = [clients]
 
-    if (clients[0] === AllClients) {
-      clients = Object.values(this.#clients)
-    } else {
-      clients.forEach(client => {
-        if (is.string(client)) return
-        throw new Error(`event client must be strings use '${AllClients}' to send event to all clients`)
-      })
-
-      clients = clients.map(id => this.#clients[id])
-    }
+    clients.forEach(id => {
+      if (is.string(id)) return
+      throw new Error("event client must be string")
+    })
 
     const params = makeParams(args)
 
-    const success = await Promise.all(clients.map(async ctx => {
+    const success = await Promise.all(clients.map(async id => {
+      const ctx = this.#clients[id]
+      if (!ctx) return false
+
       try {
         const msg = {method: name, params}
         await send(ctx, msg)
@@ -84,6 +76,11 @@ module.exports = class Server {
     }))
 
     return isBatch ? success : success[0]
+  }
+
+  async emitAll(name, ...args) {
+    const clients = Object.keys(this.#clients)
+    return await this.emit(clients, name, ...args)
   }
 
 

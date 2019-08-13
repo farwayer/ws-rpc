@@ -9,6 +9,5 @@ module.exports = {
   },
   ProtocolsHeader: 'sec-websocket-protocol',
   HttpPreconditionFailed: 412,
-  AllClients: 'all',
   DefaultPingInterval: 3000,
 }
