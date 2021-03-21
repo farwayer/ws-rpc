@@ -1,8 +1,5 @@
-import {isArr} from 'istp'
-
-const {isDef, isUndef, isNum, isStr, isNul, isObj} = require('istp')
+const {isDef, isUndef, isNum, isStr, isInt, isNul, isObj, isArr} = require('istp')
 const Errors = require('./errors')
-const {isInt} = require('istp')
 const {Protocol, MsgType} = require('./const')
 
 
