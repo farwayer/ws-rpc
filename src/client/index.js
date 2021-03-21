@@ -1,4 +1,4 @@
-import {Emitter} from 'nanoevents'
+import {createNanoEvents} from 'nanoevents'
 import WSClient, {WSEvents} from 'wscl'
 import {isArr, isStr} from 'istp'
 import {msgParse, makeParams, msgSetVersion, MsgType} from '../common/proto'
@@ -19,7 +19,7 @@ export const Events = {
 
 export default class Client {
   #wsc
-  #emitter = new Emitter()
+  #emitter = createNanoEvents()
   #calls = {}
   #callLastId = 0
   #encoder
