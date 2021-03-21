@@ -1,4 +1,4 @@
-const NanoEvents = require('nanoevents')
+const {Emitter} = require('nanoevents')
 const WSServer = require('./wss')
 const Context = require('./context')
 const JsonEncoder = require('../common/encoders/json')
@@ -13,7 +13,7 @@ const {WSEvents, ProtocolsHeader, HttpPreconditionFailed, DefaultPingInterval} =
 
 module.exports = class Server {
   #wss
-  #emitter = new NanoEvents()
+  #emitter = new Emitter()
   #rpc = {}
   #clients = {}
   #cfg = {
