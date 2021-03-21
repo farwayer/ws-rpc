@@ -1,13 +1,16 @@
-const is = require('./is')
+import {isArr} from 'istp'
+
+const {isDef, isUndef, isNum, isStr, isNul, isObj} = require('istp')
 const Errors = require('./errors')
+const {isInt} = require('istp')
 const {Protocol, MsgType} = require('./const')
 
 
 function msgParse(msg) {
   const {jsonrpc, id, method, params, error, result} = msg
-  const hasId = is.defined(id)
+  const hasId = isDef(id)
 
-  if (hasId && !is.string(id) && !is.number(id) && !is.null(id)) {
+  if (hasId && !isStr(id) && !isNum(id) && !isNul(id)) {
     throw msgErr(Errors.InvalidId, id)
   }
 
@@ -15,37 +18,37 @@ function msgParse(msg) {
     throw msgErr(Errors.UnsupportedProtocol, id)
   }
 
-  if (is.defined(result)) {
-    if (is.defined(error)) {
+  if (isDef(result)) {
+    if (isDef(error)) {
       throw msgErr(Errors.HasErrorAndResult, id)
     }
 
     return {type: MsgType.Response, id, result}
   }
 
-  if (is.defined(error)) {
-    if (!is.object(error)) {
+  if (isDef(error)) {
+    if (!isObj(error)) {
       throw msgErr(Errors.ErrorIsNotObject, id)
     }
-    if (!is.integer(error.code)) {
+    if (!isInt(error.code)) {
       throw msgErr(Errors.ErrorCodeIsNotInteger, id)
     }
-    if (!is.string(error.message)) {
+    if (!isStr(error.message)) {
       throw msgErr(Errors.ErrorMessageIsNotString, id)
     }
 
     return {type: MsgType.Error, id, error}
   }
 
-  if (!is.defined(method)) {
+  if (isUndef(method)) {
     throw msgErr(Errors.NoMethodResultError, id)
   }
 
-  if (!is.string(method)) {
+  if (!isStr(method)) {
     throw msgErr(Errors.MethodMustBeString, id)
   }
 
-  if (is.defined(params) && !is.array(params) && !is.object(params)) {
+  if (isDef(params) && !isArr(params) && !isObj(params)) {
     throw msgErr(Errors.InvalidParams, id)
   }
 
@@ -56,7 +59,7 @@ function msgParse(msg) {
 }
 
 function msgSetVersion(msgs) {
-  if (!is.array(msgs)) msgs = [msgs]
+  if (!isArr(msgs)) msgs = [msgs]
 
   msgs.forEach(msg => {
     msg.jsonrpc = Protocol
@@ -68,7 +71,7 @@ function msgErr(error, id = null) {
 }
 
 function parseParams(params) {
-  return is.array(params) ? params : [params]
+  return isArr(params) ? params : [params]
 }
 
 function makeParams(args = []) {
@@ -76,7 +79,7 @@ function makeParams(args = []) {
     case 0:
       return
     case 1:
-      return is.object(args[0]) && !is.array(args[0])
+      return isObj(args[0]) && !isArr(args[0])
         ? args[0]
         : args
     default:

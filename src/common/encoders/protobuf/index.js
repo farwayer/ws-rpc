@@ -1,6 +1,6 @@
 const Pbf = require('pbf')
+const {isNul, isArr, isInt} = require('istp')
 const {Packet, Null} = require('./rpc')
-const is = require('../../is')
 const {RpcPrefix} = require('../../const')
 
 
@@ -82,14 +82,14 @@ function decodeError(error) {
 function encodeValue(val) {
   switch (typeof val) {
     case 'undefined': return
-    case 'number': return is.integer(val) ? {int: val} : {double: val}
+    case 'number': return isInt(val) ? {int: val} : {double: val}
     case 'string': return {str: val}
     case 'boolean': return {bool: val}
     case 'object':
-      if (is.null(val)) {
+      if (isNul(val)) {
         return {null: Null.NULL_VALUE.value}
       }
-      if (is.array(val)) {
+      if (isArr(val)) {
         return {arr: {items: val.map(encodeValue)}}
       }
       return {obj: {fields: Object.entries(val)
@@ -104,7 +104,7 @@ function encodeValue(val) {
 }
 
 function decodeValue(val) {
-  if (is.null(val)) return
+  if (isNul(val)) return
   const {type} = val
 
   switch (type) {

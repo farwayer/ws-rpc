@@ -1,8 +1,8 @@
 import NanoEvents from 'nanoevents'
 import WSClient, {WSEvents} from 'wscl'
+import {isArr, isStr} from 'istp'
 import {msgParse, makeParams, msgSetVersion, MsgType} from '../common/proto'
 import {RpcPrefix} from '../common/const'
-import is from '../common/is'
 import JsonEncoder from '../common/encoders/json'
 import {RpcError, TimeoutError} from './errors'
 
@@ -75,7 +75,7 @@ export default class Client {
   }
 
   emit(name, ...args) {
-    if (!is.string(name)) {
+    if (!isStr(name)) {
       throw new Error("event name must be strings")
     }
 
@@ -104,7 +104,7 @@ export default class Client {
       return
     }
 
-    if (!is.array(msgs)) msgs = [msgs]
+    if (!isArr(msgs)) msgs = [msgs]
     msgs.forEach(this.#msg)
   }
 

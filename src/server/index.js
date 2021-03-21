@@ -2,8 +2,10 @@ const NanoEvents = require('nanoevents')
 const WSServer = require('./wss')
 const Context = require('./context')
 const JsonEncoder = require('../common/encoders/json')
-const is = require('../common/is')
+const {isStr, isInt, isUndef, isDef} = require('istp')
 const Errors = require('../common/errors')
+const {isObj} = require('istp')
+const {isArr} = require('istp')
 const {msgParse, msgSetVersion, msgErr, makeParams, MsgType} = require('../common/proto')
 const {RpcPrefix} = require('../common/const')
 const {WSEvents, ProtocolsHeader, HttpPreconditionFailed, DefaultPingInterval} = require('./const')
@@ -48,15 +50,15 @@ module.exports = class Server {
   }
 
   async emit(clients, name, ...args) {
-    if (!is.string(name)) {
+    if (!isStr(name)) {
       throw new Error("event name must be string")
     }
 
-    const isBatch = is.array(clients)
+    const isBatch = isArr(clients)
     if (!isBatch) clients = [clients]
 
     clients.forEach(id => {
-      if (is.string(id)) return
+      if (isStr(id)) return
       throw new Error("event client must be string")
     })
 
@@ -120,12 +122,12 @@ module.exports = class Server {
       return this._sendResponse(ctx, resp, opts)
     }
 
-    if (!is.object(msgs)) {
+    if (!isObj(msgs)) {
       const resp = msgErr(Errors.InvalidMessage)
       return this._sendResponse(ctx, resp)
     }
 
-    const isBatch = is.array(msgs)
+    const isBatch = isArr(msgs)
     if (!isBatch) msgs = [msgs]
 
     let resps = await Promise.all(msgs.map(this._msg.bind(this, ctx)))
@@ -165,15 +167,15 @@ module.exports = class Server {
 
     try {
       let result = await call(ctx, ...args)
-      if (!is.defined(result)) result = null
+      if (isUndef(result)) result = null
 
       return {id, result}
     } catch (e) {
-      if (!is.defined(e.code)) {
+      if (isUndef(e.code)) {
         return msgErr({...Errors.InternalError, data: e.message}, id)
       }
 
-      if (is.integer(e.code)) {
+      if (isInt(e.code)) {
         return msgErr({code: e.code, message: e.message, data: e.data}, id)
       }
 
@@ -220,10 +222,10 @@ Try to set encoder in options or with 'sec-websocket-protocol: rpc.protobuf, rpc
     message = `${encoder} encode error - ${message}`
     const error = {...Errors.Encoding, data: message}
 
-    msgs = is.array(msgs)
+    msgs = isArr(msgs)
       ? msgs
         .map(msg => msg.id)
-        .filter(id => is.defined(id))
+        .filter(isDef)
         .map(id => msgErr(error, id))
       : msgErr(error)
 
