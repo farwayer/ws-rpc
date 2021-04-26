@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/encoder-protobuf",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
