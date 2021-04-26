@@ -1,8 +1,8 @@
-const WS = require('ws')
-const {WSEvents} = require('./const')
+import WS from 'ws'
+import {WSEvents} from './const'
 
 
-module.exports = class WSServer extends WS.Server {
+export default class WSServer extends WS.Server {
   #pingTimer
 
   constructor(wsOpt, cfg) {

@@ -1,9 +1,9 @@
-const {isDef, isUndef, isNum, isStr, isInt, isNul, isObj, isArr} = require('istp')
-const Errors = require('./errors')
-const {Protocol, MsgType} = require('./const')
+import {isDef, isUndef, isNum, isStr, isInt, isNul, isObj, isArr} from 'istp'
+import * as Errors from './errors'
+import {Protocol, MsgType} from './const'
 
 
-function msgParse(msg) {
+export function msgParse(msg) {
   const {jsonrpc, id, method, params, error, result} = msg
   const hasId = isDef(id)
 
@@ -55,23 +55,25 @@ function msgParse(msg) {
   return {type, id, method, args}
 }
 
-function msgSetVersion(msgs) {
-  if (!isArr(msgs)) msgs = [msgs]
+export function msgSetVersion(msgList) {
+  if (!isArr(msgList)) {
+    msgList = [msgList]
+  }
 
-  msgs.forEach(msg => {
+  msgList.forEach(msg => {
     msg.jsonrpc = Protocol
   })
 }
 
-function msgErr(error, id = null) {
+export function msgErr(error, id = null) {
   return {id, error}
 }
 
-function parseParams(params) {
+export function parseParams(params) {
   return isArr(params) ? params : [params]
 }
 
-function makeParams(args = []) {
+export function makeParams(args = []) {
   switch (args.length) {
     case 0:
       return
@@ -82,14 +84,4 @@ function makeParams(args = []) {
     default:
       return args
   }
-}
-
-module.exports = {
-  Protocol,
-  MsgType,
-  msgParse,
-  msgSetVersion,
-  parseParams,
-  makeParams,
-  msgErr,
 }

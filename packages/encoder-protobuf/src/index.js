@@ -1,16 +1,16 @@
-const Pbf = require('pbf')
-const {isNul, isArr, isInt} = require('istp')
-const {Packet, Null} = require('./rpc')
-const {RpcPrefix} = require('../../const')
+import Pbf from 'pbf'
+import {isNul, isArr, isInt} from 'istp'
+import {Packet, Null} from './rpc'
+import {RpcPrefix} from 'rpc-ws-proto'
 
 
 const EmptyMethod = RpcPrefix + 'empty'
 
-module.exports = {
+export const ProtobufEncoder = {
   name: 'protobuf',
 
   encode(msgs) {
-    if (!Array.isArray(msgs)) msgs = [msgs]
+    if (!isArr(msgs)) msgs = [msgs]
 
     const jsonrpc = encodeVersion(msgs[0].jsonrpc)
     msgs = msgs.map(encodeMessage)

@@ -1,5 +1,10 @@
 .idea/
+.yarn/*
+!.yarn/releases/
+!.yarn/plugins/
 node_modules/
 browser/
-src/common/encoders/protobuf/rpc.js
+packages/encoder-protobuf/src/rpc.js
 yarn-error.log
+
+packages/*/**/browser

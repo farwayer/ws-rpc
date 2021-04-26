@@ -1,48 +1,5 @@
 {
-  "name": "rpc-ws",
-  "version": "0.0.1",
-  "license": "WTFPL",
-  "description": "TODO",
-  "author": "farwayer <farwayer@gmail.com>",
-  "repository": "farwayer/rpc-ws",
-  "scripts": {
-    "prepack": "yarn build",
-    "build": "yarn clean && yarn proto && yarn browser-cjs && yarn browser-esm",
-    "browser-cjs": "yarn browser --out-dir browser/cjs",
-    "browser-esm": "ESM=1 yarn browser --out-dir browser/esm",
-    "browser-watch": "yarn browser-cjs --watch",
-    "browser": "babel --ignore src/server --ignore src/node.js src",
-    "clean": "rm -rf browser",
-    "proto": "pbf src/common/encoders/protobuf/rpc.proto > src/common/encoders/protobuf/rpc.js"
-  },
-  "main": "src/node.js",
-  "browser": {
-    ".": "./browser/cjs",
-    "./encoders/json": "./browser/cjs/common/encoders/json",
-    "./encoders/protobuf": "./browser/cjs/common/encoders/protobuf"
-  },
-  "engines": {
-    "node": ">=10"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.13.10",
-    "istp": "^1.0.5",
-    "nanoevents": "^5.1.13",
-    "nanoid": "^3.1.22",
-    "ws": "^7.4.4",
-    "wscl": "^1.0.2"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.3",
-    "pbf": "^3.2.1",
-    "utf-8-validate": "^5.0.4"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.13.10",
-    "@babel/core": "^7.13.10",
-    "@babel/plugin-proposal-export-default-from": "^7.12.13",
-    "@babel/plugin-transform-runtime": "^7.13.10",
-    "@babel/preset-env": "^7.13.10",
-    "caniuse-api": "^3.0.0"
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }
