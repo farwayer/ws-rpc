@@ -3,8 +3,8 @@ import {isStr, isInt, isUndef, isDef, isObj, isArr} from 'istp'
 import {
   msgParse, msgSetVersion, msgErr, makeParams,
   Errors, MsgType, RpcPrefix, Events,
-} from 'rpc-ws-proto'
-import {JsonEncoder} from 'rpc-ws-encoder-json'
+} from '@ws-rpc/proto'
+import {JsonEncoder} from '@ws-rpc/encoder-json'
 import WSServer from './wss'
 import Client from './client'
 import Context from './context'

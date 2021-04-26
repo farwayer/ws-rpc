@@ -1,3 +1,3 @@
-export {Errors} from 'rpc-ws-proto'
-export * from 'rpc-ws-encoder-json'
+export {Errors} from '@ws-rpc/proto'
+export * from '@ws-rpc/encoder-json'
 export * from './server'

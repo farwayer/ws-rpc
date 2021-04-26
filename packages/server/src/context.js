@@ -1,4 +1,4 @@
-import {Errors} from 'rpc-ws-proto'
+import {Errors} from '@ws-rpc/proto'
 
 
 export default class Context {

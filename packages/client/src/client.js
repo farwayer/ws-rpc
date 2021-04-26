@@ -1,8 +1,8 @@
 import {createNanoEvents} from 'nanoevents'
 import WSClient, {WSEvents} from 'wscl'
 import {isArr, isStr} from 'istp'
-import {msgParse, makeParams, msgSetVersion, MsgType, RpcPrefix} from 'rpc-ws-proto'
-import {JsonEncoder} from 'rpc-ws-encoder-json'
+import {msgParse, makeParams, msgSetVersion, MsgType, RpcPrefix} from '@ws-rpc/proto'
+import {JsonEncoder} from '@ws-rpc/encoder-json'
 import {RpcError, TimeoutError} from './errors'
 import {Events} from './events'
 

@@ -1,7 +1,7 @@
 import Pbf from 'pbf'
 import {isNul, isArr, isInt} from 'istp'
 import {Packet, Null} from './rpc'
-import {RpcPrefix} from 'rpc-ws-proto'
+import {RpcPrefix} from '@ws-rpc/proto'
 
 
 const EmptyMethod = RpcPrefix + 'empty'

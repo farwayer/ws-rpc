@@ -1,4 +1,4 @@
-import {RpcPrefix, Events as ProtoEvents} from 'rpc-ws-proto'
+import {RpcPrefix, Events as ProtoEvents} from '@ws-rpc/proto'
 
 
 export const Events = {
