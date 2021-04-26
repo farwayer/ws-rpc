@@ -1,10 +1,10 @@
 {
-  "name": "rpc-ws-encoder-json",
-  "version": "0.1.0",
+  "name": "@ws-rpc/encoder-json",
+  "version": "0.0.1",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
-  "repository": "farwayer/rpc-ws",
+  "repository": "farwayer/ws-rpc",
   "sideEffects": false,
   "type": "module",
   "main": "index.js"

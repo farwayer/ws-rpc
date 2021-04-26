@@ -1,18 +1,20 @@
 {
-  "name": "rpc-ws-encoder-protobuf",
+  "name": "@ws-rpc/encoder-protobuf",
   "version": "0.1.0",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
-  "repository": "farwayer/rpc-ws",
+  "repository": "farwayer/ws-rpc",
   "sideEffects": false,
   "type": "module",
   "main": "src/index.js",
   "browser": "browser/index.js",
   "dependencies": {
     "istp": "^1.0.6",
-    "pbf": "^3.2.1",
-    "rpc-ws-proto": "workspace:*"
+    "pbf": "^3.2.1"
+  },
+  "peerDependencies": {
+    "@ws-rpc/proto": "*"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",

@@ -1,19 +1,19 @@
 {
-  "name": "rpc-ws-client",
-  "version": "0.1.0",
+  "name": "@ws-rpc/client",
+  "version": "0.0.1",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
-  "repository": "farwayer/rpc-ws",
+  "repository": "farwayer/ws-rpc",
   "sideEffects": false,
   "type": "module",
   "main": "src/index.js",
   "browser": "browser/index.js",
   "dependencies": {
+    "@ws-rpc/encoder-json": "workspace:*",
+    "@ws-rpc/proto": "workspace:*",
     "istp": "^1.0.6",
     "nanoevents": "^6.0.0",
-    "rpc-ws-encoder-json": "workspace:*",
-    "rpc-ws-proto": "workspace:*",
     "wscl": "^1.1.0"
   },
   "devDependencies": {

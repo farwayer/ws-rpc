@@ -1,10 +1,10 @@
 {
-  "name": "rpc-ws-proto",
+  "name": "@ws-rpc/proto",
   "version": "0.1.0",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
-  "repository": "farwayer/rpc-ws",
+  "repository": "farwayer/ws-rpc",
   "sideEffects": false,
   "type": "module",
   "main": "src/index.js",

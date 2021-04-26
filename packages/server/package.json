@@ -1,21 +1,21 @@
 {
-  "name": "rpc-ws-server",
+  "name": "@ws-rpc/server",
   "version": "0.0.1",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
-  "repository": "farwayer/rpc-ws",
+  "repository": "farwayer/ws-rpc",
   "type": "module",
   "main": "src/index.js",
   "engines": {
     "node": ">=14.16"
   },
   "dependencies": {
+    "@ws-rpc/encoder-json": "workspace:*",
+    "@ws-rpc/proto": "workspace:*",
     "istp": "^1.0.6",
     "nanoevents": "^6.0.0",
     "nanoid": "^3.1.22",
-    "rpc-ws-encoder-json": "workspace:*",
-    "rpc-ws-proto": "workspace:*",
     "ws": "^7.4.5"
   },
   "optionalDependencies": {
