@@ -1,4 +1,4 @@
-import {Protocol} from './const'
+import {Protocol} from './const.js'
 
 
 export const ParseError = {code: -32700, message: "Parse error"}

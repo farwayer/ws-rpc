@@ -3,8 +3,8 @@ import WSClient, {WSEvents} from 'wscl'
 import {isArr, isStr} from 'istp'
 import {msgParse, makeParams, msgSetVersion, MsgType, RpcPrefix} from '@ws-rpc/proto'
 import {JsonEncoder} from '@ws-rpc/encoder-json'
-import {RpcError, TimeoutError} from './errors'
-import {Events} from './events'
+import {RpcError, TimeoutError} from './errors.js'
+import {Events} from './events.js'
 
 
 const DefaultTimeout = 5000

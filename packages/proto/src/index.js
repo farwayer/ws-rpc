@@ -1,4 +1,4 @@
-export * as Errors from './errors'
-export * from './events'
-export * from './const'
-export * from './proto'
+export * as Errors from './errors.js'
+export * from './events.js'
+export * from './const.js'
+export * from './proto.js'

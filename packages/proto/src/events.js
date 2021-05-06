@@ -1,4 +1,4 @@
-import {RpcPrefix} from './const'
+import {RpcPrefix} from './const.js'
 
 
 export const Events = {

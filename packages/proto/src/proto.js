@@ -1,6 +1,6 @@
 import {isDef, isUndef, isNum, isStr, isInt, isNul, isObj, isArr} from 'istp'
-import * as Errors from './errors'
-import {Protocol, MsgType} from './const'
+import * as Errors from './errors.js'
+import {Protocol, MsgType} from './const.js'
 
 
 export function msgParse(msg) {

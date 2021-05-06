@@ -1,6 +1,6 @@
 import Pbf from 'pbf'
 import {isNul, isArr, isInt} from 'istp'
-import {Packet, Null} from './rpc'
+import {Packet, Null} from './rpc.js'
 import {RpcPrefix} from '@ws-rpc/proto'
 
 
