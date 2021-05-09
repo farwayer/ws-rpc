@@ -5,7 +5,8 @@
 !.yarn/plugins/
 node_modules/
 browser/
-packages/encoder-protobuf/src/rpc.js
 yarn-error.log
 
 packages/*/**/browser
+packages/*/**/index.browser.js
+packages/encoder-protobuf/rpc.cjs

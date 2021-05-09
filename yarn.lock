@@ -1324,13 +1324,25 @@ __metadata:
     "@babel/core": ^7.13.16
     "@babel/plugin-transform-runtime": ^7.13.15
     "@babel/preset-env": ^7.13.15
+    "@ws-rpc/pbf": ^3.2.0
     istp: ^1.0.6
-    pbf: ^3.2.1
     rimraf: ^3.0.2
   peerDependencies:
     "@ws-rpc/proto": "*"
   languageName: unknown
   linkType: soft
+
+"@ws-rpc/pbf@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@ws-rpc/pbf@npm:3.2.0"
+  dependencies:
+    ieee754: ^1.1.12
+    resolve-protobuf-schema: ^2.1.0
+  bin:
+    pbf: bin/pbf
+  checksum: ca203f8c1ace3e83ecd5568f9b73feaefae8996e29aaa71a91570d8a1109d85263d909a239885e1f177d6cb6866115b2c3635a70bdacd3517f5cc44572fdfd93
+  languageName: node
+  linkType: hard
 
 "@ws-rpc/proto@workspace:*, @ws-rpc/proto@workspace:packages/proto":
   version: 0.0.0-use.local
@@ -3127,18 +3139,6 @@ fsevents@~2.3.1:
   version: 1.0.6
   resolution: "path-parse@npm:1.0.6"
   checksum: 2eee4b93fb3ae13600e3fca18390d9933bbbcf725a624f6b8df020d87515a74872ff6c58072190d6dc75a5584a683dc6ae5c385ad4e4f4efb6e66af040d56c67
-  languageName: node
-  linkType: hard
-
-"pbf@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "pbf@npm:3.2.1"
-  dependencies:
-    ieee754: ^1.1.12
-    resolve-protobuf-schema: ^2.1.0
-  bin:
-    pbf: bin/pbf
-  checksum: bad0619a0cfa3d876b955442da021a9106258d989870371abd0837e1f1aaa13e5f30d7d3b4a8aa5ba73691e88cc88a3a99192c37de3ac1abe65f6d9df19b3bcf
   languageName: node
   linkType: hard
 

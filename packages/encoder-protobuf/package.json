@@ -1,17 +1,17 @@
 {
   "name": "@ws-rpc/encoder-protobuf",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
   "repository": "farwayer/ws-rpc",
   "sideEffects": false,
   "type": "module",
-  "main": "src/index.js",
-  "browser": "browser/index.js",
+  "main": "index.js",
+  "browser": "index.browser.js",
   "dependencies": {
-    "istp": "^1.0.6",
-    "pbf": "^3.2.1"
+    "@ws-rpc/pbf": "^3.2.0",
+    "istp": "^1.0.6"
   },
   "peerDependencies": {
     "@ws-rpc/proto": "*"
@@ -25,9 +25,8 @@
   },
   "scripts": {
     "prepack": "yarn build",
-    "build": "yarn clean && yarn proto && yarn browser",
-    "browser": "babel --config-file ../../babel.config.js --out-dir browser src",
-    "clean": "rimraf browser",
-    "proto": "pbf src/rpc.proto > src/rpc.js"
+    "build": "yarn proto && yarn browser",
+    "browser": "babel --config-file ../../babel.config.js --out-file index.browser.js index.js",
+    "proto": "pbf rpc.proto > rpc.cjs"
   }
 }
