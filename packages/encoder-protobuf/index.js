@@ -79,6 +79,10 @@ function decodeError(error) {
 }
 
 function encodeValue(val) {
+  if (val?.toJSON) {
+    val = val.toJSON()
+  }
+
   switch (typeof val) {
     case 'undefined': return
     case 'number': return isInt(val) ? {int: val} : {double: val}
