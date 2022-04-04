@@ -276,7 +276,7 @@ async function send(client, msgs, opt = {}) {
     await socketSend(client.ws, msgs)
   }
   catch (e) {
-    new SendError(e.message)
+    throw new SendError(e.message)
   }
 }
 
