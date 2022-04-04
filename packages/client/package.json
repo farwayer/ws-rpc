@@ -13,14 +13,14 @@
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
     "istp": "^1.0.6",
-    "nanoevents": "^6.0.0",
+    "nanoevents": "^6.0.2",
     "wscl": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.13.16",
-    "@babel/plugin-transform-runtime": "^7.13.15",
-    "@babel/preset-env": "^7.13.15",
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.8",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
     "rimraf": "^3.0.2"
   },
   "peerDependencies": {

@@ -14,11 +14,11 @@
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
     "istp": "^1.0.6",
-    "nanoevents": "^6.0.0",
-    "nanoid": "^3.1.22",
+    "nanoevents": "^6.0.2",
+    "nanoid": "^3.3.2",
     "ws": "^7.4.5"
   },
   "optionalDependencies": {
-    "bufferutil": "^4.0.3"
+    "bufferutil": "^4.0.6"
   }
 }
