@@ -108,8 +108,14 @@ export class Server {
       return cb(false, HttpPreconditionFailed, e.message)
     }
 
-    if (!verifyClient) return cb(true)
-    if (verifyClient.length === 2) return verifyClient(info, cb)
+    if (!verifyClient) {
+      return cb(true)
+    }
+
+    if (verifyClient.length === 2) {
+      return verifyClient(info, cb)
+    }
+
     cb(verifyClient(info))
   }
 

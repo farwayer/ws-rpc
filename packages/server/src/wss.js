@@ -1,31 +1,50 @@
-import WS from 'ws'
+import {createNanoEvents} from 'nanoevents'
+import {WebSocketServer} from 'ws'
 import {WSEvents} from './const.js'
 
 
-export default class WSServer extends WS.Server {
+export default class WSServer {
+  #ws
   #pingTimer
+  #emitter = createNanoEvents()
 
-  constructor(wsOpt, cfg) {
-    super(wsOpt)
+  constructor(wsOpt, cfg = {}) {
+    const {pingInterval} = cfg
+    if (!pingInterval) {
+      throw new Error(`cfg.pingInterval required`)
+    }
 
-    this.on(WSEvents.Connection, ws => {
+    this.#ws = new WebSocketServer(wsOpt)
+
+    this.#ws.on(WSEvents.Connection, ws => {
       ws.alive = true
+
       ws.on(WSEvents.Pong, function () {
         this.alive = true
       })
     })
 
     this.#pingTimer = setInterval(() => {
-      this.clients.forEach(ws => {
-        if (!ws.alive) return ws.terminate()
+      this.#ws.clients.forEach(ws => {
+        if (!ws.alive) {
+          return ws.terminate()
+        }
+
         ws.alive = false
         ws.ping()
       })
-    }, cfg.pingInterval)
+    }, pingInterval)
   }
 
   close() {
     clearInterval(this.#pingTimer)
-    super.close(...arguments)
+    this.#ws.close(...arguments)
+  }
+
+  on(event, cb) {
+    this.#emitter.on(event, cb)
+    this.#ws.on(event, (...args) => {
+      this.#emitter.emit(event, ...args)
+    })
   }
 }
