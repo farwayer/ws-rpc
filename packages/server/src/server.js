@@ -5,13 +5,13 @@ import {
   Errors, MsgType, RpcPrefix, Events,
 } from '@ws-rpc/proto'
 import {JsonEncoder} from '@ws-rpc/encoder-json'
-import WSServer from './wss'
-import Client from './client'
-import Context from './context'
-import {SendError, EncodeError} from './errors'
+import WSServer from './wss.js'
+import Client from './client.js'
+import Context from './context.js'
+import {SendError, EncodeError} from './errors.js'
 import {
   WSEvents, ProtocolsHeader, HttpPreconditionFailed, DefaultPingInterval,
-} from './const'
+} from './const.js'
 
 
 export class Server {

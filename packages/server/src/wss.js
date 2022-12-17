@@ -1,5 +1,5 @@
 import WS from 'ws'
-import {WSEvents} from './const'
+import {WSEvents} from './const.js'
 
 
 export default class WSServer extends WS.Server {
