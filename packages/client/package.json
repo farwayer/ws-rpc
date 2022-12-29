@@ -14,7 +14,7 @@
     "@ws-rpc/proto": "workspace:*",
     "istp": "^1.0.6",
     "nanoevents": "^7.0.1",
-    "wscl": "^1.1.2"
+    "wscl": "^1.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.20.7",

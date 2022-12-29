@@ -1599,7 +1599,7 @@ __metadata:
     istp: ^1.0.6
     nanoevents: ^7.0.1
     rimraf: ^3.0.2
-    wscl: ^1.1.2
+    wscl: ^1.2.1
   peerDependencies:
     "@babel/runtime": "*"
   languageName: unknown
@@ -3352,12 +3352,12 @@ resolve@^1.14.2:
   languageName: node
   linkType: hard
 
-"wscl@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "wscl@npm:1.1.2"
+"wscl@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "wscl@npm:1.2.1"
   dependencies:
     nanoevents: ^7.0.1
-  checksum: 602c1bde25c3e4d1110a7868a724f1a07fb80c938721c172cfe145b734903b490c608addc2825995ac2c521e1810eb78f74a565d7c23221bac03087d78a0c7ab
+  checksum: 31e3e00dec820b7f045d356fa08d6e7bab944f9343f5b2ce6b46fe46fa79b94c5121b99f51dac8b24a7b7a3e88706824aac06ba310f764d95edb077d72a381c9
   languageName: node
   linkType: hard
 
