@@ -70,6 +70,7 @@ export function msgErr(error, id = null) {
 }
 
 export function parseParams(params) {
+  if (isUndef(params)) return []
   return isArr(params) ? params : [params]
 }
 
