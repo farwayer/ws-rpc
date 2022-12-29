@@ -43,8 +43,11 @@ export class Client {
   }
 
   async connect() {
-    if (this.connected) return
-    return this._wsc.connect()
+    if (!this.connected) {
+      await this._wsc.connect()
+    }
+
+    return this
   }
 
   get connected() {
