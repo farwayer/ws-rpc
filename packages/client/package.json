@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/client",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
@@ -14,11 +14,11 @@
     "@ws-rpc/proto": "workspace:*",
     "istp": "^1.0.6",
     "nanoevents": "^7.0.1",
-    "wscl": "^1.1.1"
+    "wscl": "^1.1.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.20.5",
+    "@babel/cli": "^7.20.7",
+    "@babel/core": "^7.20.7",
     "@babel/plugin-transform-runtime": "^7.19.6",
     "@babel/preset-env": "^7.20.2",
     "rimraf": "^3.0.2"
