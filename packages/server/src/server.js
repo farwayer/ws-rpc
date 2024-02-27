@@ -46,7 +46,7 @@ export class Server {
     this.#wss.on('connection', this.#wsConnected)
   }
 
-  isClientConnected(clientId) {
+  hasClient(clientId) {
     return this.#clients.has(clientId)
   }
 
