@@ -46,8 +46,12 @@ export class Server {
     this.#wss.on('connection', this.#wsConnected)
   }
 
-  hasClient(clientId) {
-    return this.#clients.has(clientId)
+  hasClient(id) {
+    return this.#clients.has(id)
+  }
+
+  getClient(id) {
+    return this.#clients.get(id)
   }
 
   async emit(clientIds, event, ...args) {

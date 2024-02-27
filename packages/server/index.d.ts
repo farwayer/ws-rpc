@@ -40,7 +40,8 @@ export class Server<C extends object> {
   rpc: Rpc<C>
   event: Event<C>
 
-  hasClient(clientId: string): boolean
+  getClient(id: string): Client | undefined
+  hasClient(id: string): boolean
   onWs(
     wsEvent: 'connection' | 'close' | 'message' | 'error' | 'headers' | 'wsClientError',
     cb: () => void, // TODO
