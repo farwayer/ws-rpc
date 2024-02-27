@@ -81,7 +81,7 @@ export class Server {
     return this.emit(this.clientIds, event, ...args)
   }
 
-  onWsEvent(event, cb) {
+  onWs(event, cb) {
     this.#wss.on(event, cb)
     return () => this.#wss.off(event, cb)
   }

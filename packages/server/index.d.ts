@@ -41,7 +41,7 @@ export class Server<C extends object> {
   event: Event<C>
 
   hasClient(clientId: string): boolean
-  onWsEvent(
+  onWs(
     wsEvent: 'connection' | 'close' | 'message' | 'error' | 'headers' | 'wsClientError',
     cb: () => void, // TODO
   ): () => void
