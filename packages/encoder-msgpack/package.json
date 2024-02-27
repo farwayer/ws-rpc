@@ -1,0 +1,16 @@
+{
+  "name": "@ws-rpc/encoder-msgpack",
+  "version": "0.0.1",
+  "license": "WTFPL",
+  "description": "TODO",
+  "author": "farwayer <farwayer@gmail.com>",
+  "repository": "farwayer/ws-rpc",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "msgpackr": "^1.10.1"
+  }
+}
