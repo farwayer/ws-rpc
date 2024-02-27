@@ -106,7 +106,7 @@ export class Server {
     ws.on('close', this.#wsCloseHandler(id))
     ws.on('message', this.#wsMessageHandler(client))
 
-    this.emit(id, events.ClientConnected, id)
+    this.emit(id, events.Connected, id)
   }
 
   #wsCloseHandler = clientId => () =>
@@ -163,17 +163,17 @@ export class Server {
     }
 
     let ctx = {
-      ...this.context,
-      client, method,
+      client,
       emit: this.emit.bind(this, client.id),
       emitAll: this.emitAll.bind(this),
       throw: throwRpcError,
       throwMethodNotFound: () => throwMethodNotFound(id, method),
+      ...this.context,
     }
 
     if (type === types.Event) {
       try {
-        this.event?.(ctx, ...args)
+        this.event?.(ctx, method, ...args)
       }
       // we should not throw if event handler failed
       catch {}
@@ -185,7 +185,7 @@ export class Server {
     }
 
     try {
-      let result = await this.rpc(ctx, ...args)
+      let result = await this.rpc(ctx, method, ...args)
       return resNew(id, result)
     }
     catch (e) {

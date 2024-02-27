@@ -1,3 +1,6 @@
+import {events} from '@ws-rpc/proto'
+
 export * from './errors.js'
-export * from './events.js'
 export * from './client.js'
+
+export let Connected = events.Connected

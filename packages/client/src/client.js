@@ -1,4 +1,3 @@
-import {createNanoEvents} from 'nanoevents'
 import * as wscl from 'wscl'
 import * as is from 'istp'
 import {
@@ -6,13 +5,14 @@ import {
 } from '@ws-rpc/proto'
 import {JsonEncoder} from '@ws-rpc/encoder-json'
 import {RpcError, RpcTimeout} from './errors.js'
-import * as events from './events.js'
 
 
 export class Client {
+  event
+  error
+
   #timeout
   #wsc
-  #emitter = createNanoEvents()
   #encoders = new Map().set(JsonEncoder.name, JsonEncoder)
   #encoder
   #callId = 0
@@ -23,8 +23,10 @@ export class Client {
   }
 
   constructor(cfg = {}) {
-    let {timeout = 30000, encoders = [], ...wscOpts} = cfg
+    let {event, error, encoders = [], timeout = 30000, ...wscOpts} = cfg
 
+    this.event = event
+    this.error = error
     this.#timeout = timeout
 
     for (let encoder of encoders) {
@@ -38,9 +40,6 @@ export class Client {
     wscOpts = {protocols, ...wscOpts}
     this.#wsc = new wscl.Client(wscOpts)
 
-    this.#wsc.on(wscl.events.Open, this.#reemitter(events.Connected))
-    this.#wsc.on(wscl.events.Close, this.#reemitter(events.Disconnected))
-    this.#wsc.on(wscl.events.Message, this.#reemitter(events.Message))
     this.#wsc.on(wscl.events.Open, this.#setEncoder)
     this.#wsc.on(wscl.events.Message, this.#handle)
   }
@@ -57,15 +56,15 @@ export class Client {
     this.#wsc.close(reason)
   }
 
+  onWs(event, cb) {
+    this.#wsc.on(event, cb)
+  }
+
   async rpc(method, ...args) {
     let id = ++this.#callId
     let msg = rpcNew(id, method, args)
 
     return this.#call(msg)
-  }
-
-  on(name, fn) {
-    this.#emitter.on(name, fn)
   }
 
   async emit(event, ...args) {
@@ -82,7 +81,7 @@ export class Client {
       await batch(msg, msgs => msgs.forEach(this.#msg))
     }
     catch (e) {
-      this.#emitter.emit(wscl.events.Error, e)
+      this.error?.(e)
     }
   }
 
@@ -91,7 +90,7 @@ export class Client {
 
     switch (type) {
       case types.Event:
-        return this.#emitter.emit(method, ...args)
+        return this.event?.(method, ...args)
 
       case types.Response:
         return this.#calls.get(id)?.ok(result)
@@ -143,11 +142,9 @@ export class Client {
     if (!this.#encoder) {
       this.#wsc.close('invalid encoder protocol')
 
-      let e = new Error(`invalid protocol '${protocol}' received from server`)
-      this.#emitter.emit(wscl.events.Error, e)
+      this.error?.(
+        new Error(`invalid protocol '${protocol}' received from server`)
+      )
     }
   }
-
-  #reemitter = event => (...args) =>
-    this.#emitter.emit(event, ...args)
 }

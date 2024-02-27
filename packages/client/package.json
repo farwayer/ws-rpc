@@ -15,7 +15,7 @@
     "@ws-rpc/proto": "workspace:*",
     "istp": "^2.0.5",
     "nanoevents": "^9.0.0",
-    "wscl": "^2.0.8"
+    "wscl": "^2.0.10"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^11.0.2",

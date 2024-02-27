@@ -21,11 +21,17 @@ type WSSConfig = ServerOptions & {
   pingInterval: number
 }
 
-export type Rpc<C extends object> =
-  <Args extends any[], R>(ctx: Context<C>, ...args: Args) => Promise<R>
+export type Rpc<C extends object> = <Args extends any[], R>(
+  ctx: Context<C>,
+  method: string,
+  ...args: Args,
+) => Promise<R>
 
-export type Event<C extends object> =
-  <Args extends any[]>(ctx: Context<C>, ...args: Args) => void
+export type Event<C extends object> = <Args extends any[]>(
+  ctx: Context<C>,
+  event: string,
+  ...args: Args,
+) => void
 
 export type Config<C extends object> = WSSConfig & {
   encoders?: Encoder[]
@@ -51,7 +57,10 @@ export class Server<C extends object> {
     cb: () => void, // TODO
   ): () => void
 
-  emit(clientIds: string | string[], event: string, ...args: any[]): Promise<boolean | boolean[]>
+  emit<Ids extends string | string[]>(
+    clientIds: Ids, event: string, ...args: any[],
+  ): Promise<Ids extends string ? boolean : boolean[]>
+
   emitAll(event: string, ...args: any[]): Promise<boolean[]>
 }
 

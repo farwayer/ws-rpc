@@ -1,38 +1,40 @@
-import {Unsubscribe} from 'nanoevents'
-import {ClientCfg} from 'wscl'
-import {Encoder} from '@ws-rpc/proto'
+import * as wscl from 'wscl'
+import {Encoder, Id, events} from '@ws-rpc/proto'
 
+export type OnEvent = <Args extends any[]>(event: string, ...args: Args) => void
+export type OnError = (error: any) => void
 
-export type Config = ClientCfg & {
+export type Config = wscl.Config & {
+  event?: OnEvent
+  error?: OnError
+  encoders?: Encoder[]
   timeout?: number
-  encoders: Encoder[]
 }
 
 export class Client {
   constructor(cfg: Config)
 
+  event?: OnEvent
+  error?: OnError
+
   readonly connected: boolean
 
   connect(): Promise<this>
-  close(reason?: string): void
-  rpc(method: string, ...args: any[]): Promise<any>
-  emit(event: string, ...args: any[]): Promise<void>
-  on(event: string, cb: (...args: any[]) => void): Unsubscribe
+  close: wscl.Client['close']
+  onWs: wscl.Client['on']
+
+  rpc<Args extends any[], T>(method: string, ...args: Args): Promise<T>
+  emit<Args extends any[]>(event: string, ...args: Args): Promise<void>
 }
 
-export class TimeoutError extends Error {
-  id: string | number
-  method: string
-  timeout: number
-}
 export class RpcError extends Error {
+  id: Id
+  method: string
   code: number
   data?: any
 }
-
-export namespace events {
-  export const Connected: 'rpc.ws.connected'
-  export const Disconnected: 'rpc.ws.disconnected'
-  export const Message: 'rpc.ws.connected'
-  export const ClientConnected: 'rpc.client.connected'
+export class RpcTimeout extends RpcError {
+  timeout: number
 }
+
+export const Connected: typeof events.Connected

@@ -329,7 +329,7 @@ __metadata:
     istp: "npm:^2.0.5"
     nanoevents: "npm:^9.0.0"
     size-limit: "npm:^11.0.2"
-    wscl: "npm:^2.0.8"
+    wscl: "npm:^2.0.10"
   languageName: unknown
   linkType: soft
 
@@ -1649,12 +1649,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wscl@npm:^2.0.8":
-  version: 2.0.8
-  resolution: "wscl@npm:2.0.8"
+"wscl@npm:^2.0.10":
+  version: 2.0.10
+  resolution: "wscl@npm:2.0.10"
   dependencies:
     nanoevents: "npm:^9.0.0"
-  checksum: 10/5e9ad3588aebaf6be163a3d8d1b12eac567a94156d519c2135f90907a2de4e74b405cec2bd6335d5dde9cef760c8520e8fa19f2d1c43ea8f153ec476af28a29b
+  checksum: 10/96e05c7667cf71a371f895cb983f11621e6c1de5375dc176d3c1542ab7524adb57c6a8af209894e45093cb7fd47064dbd95c2a76472f01564a450458b3a2c057
   languageName: node
   linkType: hard
 
