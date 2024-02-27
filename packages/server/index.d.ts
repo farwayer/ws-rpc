@@ -17,27 +17,27 @@ export type Context<C extends object = {}> = C & {
   throwMethodNotFound: typeof throwMethodNotFound
 }
 
-type WSSConfig = ServerOptions & {
-  pingInterval: number
-}
-
-export type Rpc<C extends object> = <Args extends any[], R>(
+export type OnRpc<C extends object> = <Args extends any[], R>(
   ctx: Context<C>,
   method: string,
   ...args: Args,
 ) => Promise<R>
 
-export type Event<C extends object> = <Args extends any[]>(
+export type OnEvent<C extends object> = <Args extends any[]>(
   ctx: Context<C>,
   event: string,
   ...args: Args,
 ) => void
 
+type WSSConfig = ServerOptions & {
+  pingInterval: number
+}
+
 export type Config<C extends object> = WSSConfig & {
   encoders?: Encoder[]
   maxBatch?: number
-  rpc?: Rpc<Context<C>>
-  event?: Event<Context<C>>
+  rpc?: OnRpc<Context<C>>
+  event?: OnEvent<Context<C>>
   context?: C
 }
 
@@ -46,8 +46,8 @@ export class Server<C extends object> {
 
   readonly clientIds: string[]
 
-  rpc: Rpc<Context<C>>
-  event: Event<Context<C>>
+  rpc: OnRpc<Context<C>>
+  event: OnEvent<Context<C>>
   context: C
 
   getClient(id: string): Client | undefined
@@ -57,11 +57,13 @@ export class Server<C extends object> {
     cb: () => void, // TODO
   ): () => void
 
-  emit<Ids extends string | string[]>(
-    clientIds: Ids, event: string, ...args: any[],
+  emit<Ids extends string | string[], Args extends any[]>(
+    clientIds: Ids,
+    event: string,
+    ...args: Args,
   ): Promise<Ids extends string ? boolean : boolean[]>
 
-  emitAll(event: string, ...args: any[]): Promise<boolean[]>
+  emitAll<Args extends any[]>(event: string, ...args: Args): Promise<boolean[]>
 }
 
 export function throwRpcError(error: RpcError): void
