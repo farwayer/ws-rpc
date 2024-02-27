@@ -13,10 +13,9 @@ import {
 
 
 export class Server {
-  context = {}
-
   rpc
   event
+  context
 
   #maxBatch
   #wss
@@ -28,11 +27,18 @@ export class Server {
   }
 
   constructor(cfg = {}) {
-    let {encoders = [], maxBatch = 128, rpc, event, ...wssOpts} = cfg
+    let {
+      encoders = [],
+      maxBatch = 128,
+      rpc, event,
+      context = {},
+      ...wssOpts,
+    } = cfg
 
     this.#maxBatch = maxBatch
     this.rpc = rpc
     this.event = event
+    this.context = context
 
     for (let encoder of encoders) {
       this.#encoders.set(encoder.name, encoder)
@@ -159,6 +165,8 @@ export class Server {
     let ctx = {
       ...this.context,
       client, method,
+      emit: this.emit.bind(this, client.id),
+      emitAll: this.emitAll.bind(this),
       throw: throwRpcError,
       throwMethodNotFound: () => throwMethodNotFound(id, method),
     }

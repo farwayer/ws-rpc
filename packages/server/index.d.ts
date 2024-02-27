@@ -8,9 +8,11 @@ export type Client = {
   ws: WebSocket
 }
 
-export type Context<C extends object = {}> = () => C & {
+export type Context<C extends object = {}> = C & {
   client: Client
   method: string
+  emit: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean>
+  emitAll: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean[]>
   throw: typeof throwRpcError
   throwMethodNotFound: typeof throwMethodNotFound
 }
@@ -28,8 +30,9 @@ export type Event<C extends object> =
 export type Config<C extends object> = WSSConfig & {
   encoders?: Encoder[]
   maxBatch?: number
-  rpc: Rpc<C>
-  event: Event<C>
+  rpc?: Rpc<Context<C>>
+  event?: Event<Context<C>>
+  context?: C
 }
 
 export class Server<C extends object> {
@@ -37,8 +40,9 @@ export class Server<C extends object> {
 
   readonly clientIds: string[]
 
-  rpc: Rpc<C>
-  event: Event<C>
+  rpc: Rpc<Context<C>>
+  event: Event<Context<C>>
+  context: C
 
   getClient(id: string): Client | undefined
   hasClient(id: string): boolean
