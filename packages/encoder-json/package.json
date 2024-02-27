@@ -1,11 +1,13 @@
 {
   "name": "@ws-rpc/encoder-json",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
   "repository": "farwayer/ws-rpc",
-  "sideEffects": false,
   "type": "module",
-  "main": "index.js"
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  }
 }

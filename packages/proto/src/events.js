@@ -1,6 +1,4 @@
 import {RpcPrefix} from './const.js'
 
 
-export const Events = {
-  ClientConnected: RpcPrefix + 'client.connected',
-}
+export let ClientConnected = RpcPrefix + 'client.connected'

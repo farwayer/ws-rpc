@@ -1,9 +1,6 @@
-import {RpcPrefix, Events as ProtoEvents} from '@ws-rpc/proto'
+import {RpcPrefix, events} from '@ws-rpc/proto'
 
-
-export const Events = {
-  Connected: RpcPrefix + 'connected',
-  Disconnected: RpcPrefix + 'disconnected',
-  Message: RpcPrefix + 'message',
-  ...ProtoEvents,
-}
+export let Connected = RpcPrefix + 'ws.connected'
+export let Disconnected = RpcPrefix + 'ws.disconnected'
+export let Message = RpcPrefix + 'ws.message'
+export let ClientConnected = events.ClientConnected

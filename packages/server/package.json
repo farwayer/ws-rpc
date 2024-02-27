@@ -6,19 +6,15 @@
   "author": "farwayer <farwayer@gmail.com>",
   "repository": "farwayer/ws-rpc",
   "type": "module",
-  "main": "src/index.js",
-  "engines": {
-    "node": ">=14.16"
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
-    "istp": "^1.0.6",
-    "nanoevents": "^7.0.1",
-    "nanoid": "^4.0.0",
-    "ws": "^8.11.0"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.7"
+    "bufferutil": "^4.0.8",
+    "istp": "^2.0.5",
+    "ws": "^8.16.0"
   }
 }

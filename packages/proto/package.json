@@ -1,31 +1,16 @@
 {
   "name": "@ws-rpc/proto",
-  "version": "0.0.7",
+  "version": "0.0.8",
+  "description": "jsonrpc 2.0 protocol basics",
   "license": "WTFPL",
-  "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
   "repository": "farwayer/ws-rpc",
-  "sideEffects": false,
   "type": "module",
-  "main": "src/index.js",
-  "browser": "browser/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
-    "istp": "^1.0.6"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.20.7",
-    "@babel/core": "^7.20.7",
-    "@babel/plugin-transform-runtime": "^7.19.6",
-    "@babel/preset-env": "^7.20.2",
-    "rimraf": "^3.0.2"
-  },
-  "peerDependencies": {
-    "@babel/runtime": "*"
-  },
-  "scripts": {
-    "prepack": "yarn build",
-    "build": "yarn clean && yarn browser",
-    "browser": "babel --config-file ../../babel.config.js --out-dir browser src",
-    "clean": "rimraf browser"
+    "istp": "^2.0.5"
   }
 }

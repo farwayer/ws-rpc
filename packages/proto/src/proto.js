@@ -1,88 +1,146 @@
-import {isDef, isUndef, isNum, isStr, isInt, isNul, isObj, isArr} from 'istp'
-import * as Errors from './errors.js'
-import {Protocol, MsgType} from './const.js'
+import * as is from 'istp'
+import * as e from './msg-errors.js'
+import * as t from './types.js'
+import {Protocol, RpcPrefix} from './const.js'
 
 
-export function msgParse(msg) {
-  const {jsonrpc, id, method, params, error, result} = msg
-  const hasId = isDef(id)
+export {errNew} from './errors.js'
 
-  if (hasId && !isStr(id) && !isNum(id) && !isNul(id)) {
-    throw msgErr(Errors.InvalidId, id)
+export let eventNew = (method, args) => {
+  let params = paramsNew(args)
+
+  return {
+    jsonrpc: Protocol,
+    method,
+    ...(is.def(params) ? {params} : {}),
   }
+}
+
+export let rpcNew = (id, method, args) => {
+  let params = paramsNew(args)
+
+  return {
+    jsonrpc: Protocol,
+    id, method,
+    ...(is.def(params) ? {params} : {}),
+  }
+}
+
+export let resNew = (id, result = null) => ({
+  jsonrpc: Protocol,
+  id, result,
+})
+
+export let encoderName = (protocol) =>
+  protocol?.split('.')[1]
+
+export let protocol = (encoderName) =>
+  RpcPrefix + encoderName
+
+export let batch = async (items, fn, maxBatch) => {
+  let isBatch = is.arr(items)
+  if (!isBatch) {
+    items = [items]
+  }
+
+  if (items.length > maxBatch) {
+    e.throwMaxBatch(maxBatch)
+  }
+
+  try {
+    items = await fn(items)
+  }
+  catch {
+    e.throwInternalError("processing failed")
+  }
+
+  if (!items?.length) return
+
+  return isBatch ? items : items[0]
+}
+
+export let msgParse = (msg) => {
+  if (!is.nonNulObj(msg)) {
+    e.throwInvalidMsgType(msg)
+  }
+
+  let {jsonrpc, id, method, params, error, result} = msg
 
   if (jsonrpc !== Protocol) {
-    throw msgErr(Errors.UnsupportedProtocol, id)
+    e.throwUnsupportedProtocol(id)
   }
 
-  if (isDef(result)) {
-    if (isDef(error)) {
-      throw msgErr(Errors.HasErrorAndResult, id)
+  let hasId = is.def(id)
+  if (hasId && !is.str(id) && !is.num(id) && !is.nul(id)) {
+    e.throwInvalidIdType(id)
+  }
+
+  if (is.def(result)) {
+    if (is.def(error)) {
+      e.throwHasErrorAndResult(id)
     }
 
-    return {type: MsgType.Response, id, result}
+    let type = t.Response
+    return {type, id, result}
   }
 
-  if (isDef(error)) {
-    if (!isObj(error)) {
-      throw msgErr(Errors.ErrorIsNotObject, id)
+  if (is.def(error)) {
+    if (!is.obj(error)) {
+      e.throwErrorIsNotObject(id)
     }
-    if (!isInt(error.code)) {
-      throw msgErr(Errors.ErrorCodeIsNotInteger, id)
+    if (!is.int(error.code)) {
+      e.throwErrorCodeIsNotInteger(id)
     }
-    if (!isStr(error.message)) {
-      throw msgErr(Errors.ErrorMessageIsNotString, id)
+    if (!is.str(error.message)) {
+      e.throwErrorMessageIsNotString(id)
     }
 
-    return {type: MsgType.Error, id, error}
+    let type = t.Error
+    return {type, id, error}
   }
 
-  if (isUndef(method)) {
-    throw msgErr(Errors.NoMethodResultError, id)
+  if (is.undef(method)) {
+    e.throwNoMethodResultError(id)
   }
 
-  if (!isStr(method)) {
-    throw msgErr(Errors.MethodMustBeString, id)
+  if (!is.str(method)) {
+    e.throwMethodMustBeString(id)
   }
 
-  if (isDef(params) && !isArr(params) && !isObj(params)) {
-    throw msgErr(Errors.InvalidParams, id)
+  if (is.def(params) && !is.nonNulObj(params)) {
+    e.throwInvalidParams(id)
   }
 
-  const args = parseParams(params)
-  const type = hasId ? MsgType.Request : MsgType.Event
+  let args = paramsParse(params)
 
-  return {type, id, method, args}
+  if (hasId) {
+    let type = t.Request
+    return {type, id, method, args}
+  }
+
+  let type = t.Event
+  return {type, method, args}
 }
 
-export function msgSetVersion(msgList) {
-  if (!isArr(msgList)) {
-    msgList = [msgList]
-  }
 
-  msgList.forEach(msg => {
-    msg.jsonrpc = Protocol
-  })
-}
-
-export function msgErr(error, id = null) {
-  return {id, error}
-}
-
-export function parseParams(params) {
-  if (isUndef(params)) return []
-  return isArr(params) ? params : [params]
-}
-
-export function makeParams(args = []) {
+// internal
+let paramsNew = (args = []) => {
   switch (args.length) {
     case 0:
       return
     case 1:
-      return isObj(args[0]) && !isArr(args[0])
+      return is.nonNulObj(args[0]) && !is.arr(args[0])
         ? args[0]
         : args
     default:
       return args
   }
+}
+
+let paramsParse = params => {
+  if (is.undef(params)) {
+    return []
+  }
+
+  return is.arr(params) ? params : [params]
 }

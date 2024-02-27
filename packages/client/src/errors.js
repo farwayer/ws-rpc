@@ -1,19 +1,26 @@
 export class RpcError extends Error {
-  constructor(error) {
-    super(error.message)
-    this.code = error.code
-    this.data = error.data
+  constructor(id, method, error) {
+    let {code, message, data} = error
+    super(message)
+    this.id = id
+    this.method = method
+    this.code = code
+    this.data = data
   }
 
   toString() {
-    let str = `[${this.code}] ${this.message}`
-    if (this.data) str += " " + JSON.stringify(this.data)
+    let str = `[${this.id}:${this.method}]`
+    if (this.code) str += ` code=${this.code}`
+    if (this.message) str += ` message="${this.message}"`
+    if (this.data) str += ` data='${JSON.stringify(this.data)}'`
     return str
   }
 }
 
-export class TimeoutError extends Error {
-  constructor(ms) {
-    super(`timeout ${ms}ms`)
+export class RpcTimeout extends RpcError {
+  constructor(id, method, timeout) {
+    let error = {message: `rpc '${method}' timeout ${timeout}ms`}
+    super(id, method, error)
+    this.timeout = timeout
   }
 }

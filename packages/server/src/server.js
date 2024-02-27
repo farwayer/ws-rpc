@@ -1,294 +1,239 @@
-import {createNanoEvents} from 'nanoevents'
-import {isStr, isInt, isUndef, isDef, isObj, isArr} from 'istp'
+import {randomBytes} from 'node:crypto'
+import * as is from 'istp'
 import {
-  msgParse, msgSetVersion, msgErr, makeParams,
-  Errors, MsgType, RpcPrefix, Events,
+  errors, events, types, RpcPrefix, encoderName, eventNew, errNew, resNew,
+  batch, msgParse, protocol,
 } from '@ws-rpc/proto'
 import {JsonEncoder} from '@ws-rpc/encoder-json'
-import WSServer from './wss.js'
-import Client from './client.js'
-import Context from './context.js'
-import {SendError, EncodeError} from './errors.js'
+import {WSServer} from './wss.js'
 import {
-  WSEvents, ProtocolsHeader, HttpPreconditionFailed, DefaultPingInterval,
-} from './const.js'
+  SendError, RpcError, throwRpcError, throwMethodNotFound,
+  errorToServer, responseToServer, EncoderError,
+} from './errors.js'
 
 
 export class Server {
-  clients = new Map()
   context = {}
 
+  rpc
+  event
+
+  #maxBatch
   #wss
-  #emitter = createNanoEvents()
-  #rpc = {}
-  #cfg = {
-    pingInterval: DefaultPingInterval,
-    encoders: [
-      JsonEncoder,
-    ],
+  #encoders = new Map().set(JsonEncoder.name, JsonEncoder)
+  #clients = new Map()
+
+  get clientIds() {
+    return Array.from(this.#clients.keys())
   }
 
-  constructor(wsOpts, cfg) {
-    Object.assign(this.#cfg, cfg)
+  constructor(cfg = {}) {
+    let {encoders = [], maxBatch = 128, rpc, event, ...wssOpts} = cfg
 
-    this.#cfg.encoders = this.#cfg.encoders.reduce((res, enc) => {
-      res[enc.name] = enc
-      return res
-    }, {})
+    this.#maxBatch = maxBatch
+    this.rpc = rpc
+    this.event = event
 
-    wsOpts = {
-      ...wsOpts,
-      handleProtocols,
-      verifyClient: this.#initClient.bind(this, wsOpts.verifyClient),
+    for (let encoder of encoders) {
+      this.#encoders.set(encoder.name, encoder)
     }
-    this.#wss = new WSServer(wsOpts, this.#cfg)
-    this.#wss.on(WSEvents.Connection, this.#connection)
+
+    wssOpts = {
+      handleProtocols: this.#wsProtocols,
+      ...wssOpts,
+    }
+    this.#wss = new WSServer(wssOpts)
+    this.#wss.on('connection', this.#wsConnected)
   }
 
   isClientConnected(clientId) {
-    return this.clients.has(clientId)
-  }
-
-  rpc(name, fn) {
-    if (name.startsWith(RpcPrefix)) {
-      throw new Error(`method '${name}' must not starts with '${RpcPrefix}'`)
-    }
-
-    this.#rpc[name] = fn
-  }
-
-  on(event, fn) {
-    return this.#emitter.on(event, fn)
+    return this.#clients.has(clientId)
   }
 
   async emit(clientIds, event, ...args) {
-    if (!isStr(event)) {
-      throw new Error("event name must be string")
+    if (!is.str(clientIds) && !(is.arr(clientIds) && clientIds.every(is.str))) {
+      throw new Error("clientIds must be a string or an array of string")
     }
 
-    const isBatch = isArr(clientIds)
-    if (!isBatch) clientIds = [clientIds]
+    if (!is.str(event)) {
+      throw new Error("event must be a string")
+    }
 
-    clientIds.forEach(id => {
-      if (isStr(id)) return
-      throw new Error("event client must be string")
+    return batch(clientIds, async clientIds => {
+      let msg = eventNew(event, args)
+
+      return Promise.all(clientIds.map(async id => {
+        let client = this.#clients.get(id)
+        if (!client) return false
+
+        try {
+          await send(client, msg)
+          return true
+        }
+        catch {
+          return false
+        }
+      }))
     })
-
-    const params = makeParams(args)
-
-    const success = await Promise.all(clientIds.map(async id => {
-      const client = this.clients.get(id)
-      if (!client) return false
-
-      try {
-        const msg = {method: event, params}
-        await send(client, msg)
-        return true
-      }
-      catch (e) {
-        return false
-      }
-    }))
-
-    return isBatch ? success : success[0] // TODO
   }
 
   async emitAll(event, ...args) {
-    const clientIds = Array.from(this.clients.keys())
-    return await this.emit(clientIds, event, ...args)
+    return this.emit(this.clientIds, event, ...args)
   }
 
 
-  #initClient(verifyClient, info, cb) {
+  #wsConnected = ws => {
+    let id = randomId()
+    let encoder = this.#getEncoder(ws.protocol)
+    let client = {id, encoder, ws}
+    this.#clients.set(id, client)
+
+    ws.on('close', this.#wsCloseHandler(id))
+    ws.on('message', this.#wsMessageHandler(client))
+
+    this.emit(id, events.ClientConnected, id)
+  }
+
+  #wsCloseHandler = clientId => () =>
+    this.#clients.delete(clientId)
+
+  #wsMessageHandler = client => async data => {
+    let [resp, opts] = await this.#handle(client, data)
+    if (!resp) return
+
+    this.#sendResponse(client, resp, opts)
+  }
+
+  // never throws
+  async #handle(client, req) {
     try {
-      const encoder = this.#findEncoder(info.req)
-      info.req.client = new Client(encoder)
+      req = await client.encoder.decode(req)
     }
-    catch (e) {
-      return cb(false, HttpPreconditionFailed, e.message)
-    }
-
-    if (!verifyClient) {
-      return cb(true)
-    }
-
-    if (verifyClient.length === 2) {
-      return verifyClient(info, cb)
-    }
-
-    cb(verifyClient(info))
-  }
-
-  #connection = (ws, req) => {
-    const {client} = req
-    client.ws = ws
-    this.clients.set(client.id, client)
-
-    ws.on(WSEvents.Message, this.#process.bind(this, client))
-    ws.on(WSEvents.Close, () => this.clients.delete(client.id))
-
-    this.emit(client.id, Events.ClientConnected, client.id)
-  }
-
-  async #process(client, msgs) {
-    try {
-      msgs = await client.encoder.decode(msgs, client)
-    }
-    catch (e) {
+    catch {
       // decoding error, send json response to simplify debugging
-      const resp = msgErr({...Errors.ParseError, data: e.message})
-      const opts = {json: true}
-      return this.#sendResponse(client, resp, opts)
+      let resp = errors.parseError("decoding failed")
+      let opts = {encoder: JsonEncoder}
+      return [resp, opts]
     }
 
-    if (!isObj(msgs)) {
-      const resp = msgErr(Errors.InvalidMessage)
-      return this.#sendResponse(client, resp)
+    try {
+      let resp = await batch(req, async msgs => {
+        let resps = await Promise.all(msgs.map(this.#msgHandler(client)))
+        return resps.filter(Boolean)
+      }, this.#maxBatch)
+
+      return [resp]
     }
-
-    const isBatch = isArr(msgs)
-    if (!isBatch) msgs = [msgs]
-
-    let resps = await Promise.all(msgs.map(this.#msg.bind(this, client)))
-    resps = resps.filter(resp => resp)
-    if (!resps.length) return
-
-    if (!isBatch) resps = resps[0]
-    this.#sendResponse(client, resps)
+    catch (resp) {
+      return [resp]
+    }
   }
 
-  async #msg(client, msg) {
+  #msgHandler = client => async msg => {
     try {
       msg = msgParse(msg)
     }
-    catch (e) {
-      if (e.error) return e
-      return msgErr({...Errors.InternalError, data: e.message}, msg.id)
+    catch (resp) {
+      return resp
     }
 
-    const {type, id, method, args} = msg
+    let {type, id, method, args} = msg
 
-    if (type === MsgType.Response) {
-      return msgErr(Errors.ResponseToServer, id)
+    if (type === types.Response) {
+      return responseToServer(id)
     }
 
-    if (type === MsgType.Error) {
-      return msgErr(Errors.ErrorToServer, id)
+    if (type === types.Error) {
+      return errorToServer(id)
     }
 
-    if (type === MsgType.Event) {
-      return this.#emitter.emit(client, ...args)
+    let ctx = {
+      ...this.context,
+      client, method,
+      throw: throwRpcError,
+      throwMethodNotFound: () => throwMethodNotFound(id, method),
     }
 
-    const call = this.#rpc[method]
-    if (!call) {
-      return msgErr(Errors.MethodNotFound, id)
+    if (type === types.Event) {
+      try {
+        this.event?.(ctx, ...args)
+      }
+      // we should not throw if event handler failed
+      catch {}
+      return
+    }
+
+    if (!this.rpc) {
+      return errors.methodNotFound(id, method)
     }
 
     try {
-      const ctx = new Context(client, method, this.context)
-      let result = await call(ctx, ...args)
-      if (isUndef(result)) result = null
-
-      return {id, result}
+      let result = await this.rpc(ctx, ...args)
+      return resNew(id, result)
     }
     catch (e) {
-      if (isUndef(e.code)) {
-        return msgErr({...Errors.InternalError, data: e.message}, id)
-      }
-
-      if (isInt(e.code)) {
-        return msgErr({code: e.code, message: e.message, data: e.data}, id)
-      }
-
-      return msgErr({
-        ...Errors.InternalError,
-        data: `server throws error with non-integer code ${e.code}`,
-      }, id)
+      return e instanceof RpcError
+        ? errNew(id, e.code, e.message, e.data)
+        : errors.internalError(id)
     }
   }
 
-  async #sendResponse(client, msgs, opt) {
+  async #sendResponse(client, resp, opts) {
     try {
-      await send(client, msgs, opt)
+      await send(client, resp, opts)
     }
     catch (e) {
-      if (e instanceof SendError) return
-      if (e instanceof EncodeError) {
-        this.#sendEncodeError(client, e)
+      if (e instanceof SendError) {
+        return
       }
+
+      if (e instanceof EncoderError) {
+        let resp = errors.internalError(null, "encoding failed")
+        let opts = {encoder: JsonEncoder}
+        await send(client, resp, opts)
+      }
+
       throw e
     }
   }
 
-  #findEncoder(req) {
-    let encoders = req.headers[ProtocolsHeader]
-    encoders = encoders ? encoders.split(',') : []
-    encoders = encoders
-      .map(enc => enc.trim())
-      .filter(enc => enc.startsWith(RpcPrefix))
-      .map(enc => enc.split('.')[1])
-    encoders.push(JsonEncoder.name)
+  #wsProtocols = protocols => {
+    let name = Array.from(protocols)
+      .filter(protocol => protocol.startsWith(RpcPrefix))
+      .map(encoderName)
+      .find(name => this.#encoders.has(name))
 
-    const name = encoders.find(name => this.#cfg.encoders[name])
-    const encoder = this.#cfg.encoders[name]
-    if (encoder) return encoder
-
-    throw new Error(`No suitable encoder found.
-Requested encoders: ${encoders.join(', ')}.
-Encoders supported by server: ${Object.keys(this.#cfg.encoders).join(', ')}.
-Try to set encoder in options or with 'sec-websocket-protocol: rpc.protobuf, rpc.json' header.`)
+    return name && protocol(name)
   }
 
-  async #sendEncodeError(client, e) {
-    let {message, encoder, msgs, opt} = e
-    message = `${encoder} encode error - ${message}`
-    const error = {...Errors.Encoding, data: message}
-
-    msgs = isArr(msgs)
-      ? msgs
-        .map(msg => msg.id)
-        .filter(isDef)
-        .map(id => msgErr(error, id))
-      : msgErr(error)
-
-    try {
-      await send(client, msgs, opt)
-    }
-    catch (e) {
-      if (e instanceof SendError) return
-      throw e
-    }
+  #getEncoder(protocol) {
+    let name = encoderName(protocol)
+    return this.#encoders.get(name)
   }
 }
 
-function handleProtocols(protocols, req) {
-  return RpcPrefix + req.client.encoder.name
-}
 
-async function send(client, msgs, opt = {}) {
-  msgSetVersion(msgs)
-
-  const encoder = opt.json ? JsonEncoder : client.encoder
+let send = async (client, msg, opt = {}) => {
+  let encoder = opt.encoder ?? client.encoder
 
   try {
-    msgs = await encoder.encode(msgs)
+    msg = await encoder.encode(msg)
   }
-  catch (e) {
-    throw new EncodeError(encoder, e.message, msgs, opt)
+  catch {
+    throw new EncoderError()
   }
 
   try {
-    await socketSend(client.ws, msgs)
+    await wsSend(client.ws, msg)
   }
-  catch (e) {
-    throw new SendError(e.message)
+  catch {
+    throw new SendError()
   }
 }
 
-function socketSend(ws, data) {
-  return new Promise((resolve, reject) => {
-    const error = e => {
+let wsSend = (ws, data) =>
+  new Promise((resolve, reject) => {
+    let error = e => {
       ws.terminate()
       reject(e)
     }
@@ -300,4 +245,7 @@ function socketSend(ws, data) {
       error(e)
     }
   })
-}
+
+
+let randomId = () =>
+  randomBytes(16).toString('base64url')

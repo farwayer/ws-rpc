@@ -1,187 +1,153 @@
 import {createNanoEvents} from 'nanoevents'
-import WSClient, {WSEvents} from 'wscl'
-import {isArr, isStr} from 'istp'
-import {msgParse, makeParams, msgSetVersion, MsgType, RpcPrefix} from '@ws-rpc/proto'
+import * as wscl from 'wscl'
+import * as is from 'istp'
+import {
+  types, msgParse, rpcNew, eventNew, protocol, encoderName, batch,
+} from '@ws-rpc/proto'
 import {JsonEncoder} from '@ws-rpc/encoder-json'
-import {RpcError, TimeoutError} from './errors.js'
-import {Events} from './events.js'
+import {RpcError, RpcTimeout} from './errors.js'
+import * as events from './events.js'
 
-
-const DefaultTimeout = 5000
 
 export class Client {
-  _wsc
-  _emitter = createNanoEvents()
-  _calls = {}
-  _callLastId = 0
-  _encoder
-  _cfg = {
-    timeout: DefaultTimeout,
-    encoders: [
-      JsonEncoder,
-    ],
+  #timeout
+  #wsc
+  #emitter = createNanoEvents()
+  #encoders = new Map().set(JsonEncoder.name, JsonEncoder)
+  #encoder
+  #callId = 0
+  #calls = new Map()
+
+  get connected() {
+    return this.#wsc.connected
   }
 
-  constructor(cfg) {
-    Object.assign(this._cfg, cfg)
+  constructor(cfg = {}) {
+    let {timeout = 30000, encoders = [], ...wscOpts} = cfg
 
-    this._cfg.encoders = this._cfg.encoders.reduce((res, enc) => {
-      res[enc.name] = enc
-      return res
-    }, {})
+    this.#timeout = timeout
 
-    this._cfg.protocols = Object.keys(this._cfg.encoders)
-      .map(enc => RpcPrefix + enc)
-      .join(',')
+    for (let encoder of encoders) {
+      this.#encoders.set(encoder.name, encoder)
+    }
 
-    this._wsc = new WSClient(this._cfg)
-    this._wsc.on(WSEvents.Open, this._reemit(Events.Connected))
-    this._wsc.on(WSEvents.Close, this._reemit(Events.Disconnected))
-    this._wsc.on(WSEvents.Message, this._reemit(Events.Message))
-    this._wsc.on(WSEvents.Open, this._setEncoder)
-    this._wsc.on(WSEvents.Message, this._process)
+    let protocols = encoders
+      .concat(JsonEncoder)
+      .map(encoder => protocol(encoder.name))
+
+    wscOpts = {protocols, ...wscOpts}
+    this.#wsc = new wscl.Client(wscOpts)
+
+    this.#wsc.on(wscl.events.Open, this.#reemitter(events.Connected))
+    this.#wsc.on(wscl.events.Close, this.#reemitter(events.Disconnected))
+    this.#wsc.on(wscl.events.Message, this.#reemitter(events.Message))
+    this.#wsc.on(wscl.events.Open, this.#setEncoder)
+    this.#wsc.on(wscl.events.Message, this.#handle)
   }
 
   async connect() {
-    if (!this.connected) {
-      await this._wsc.connect()
-    }
+    await this.#wsc.connect(ws => {
+      ws.binaryType = 'arraybuffer'
+    })
 
     return this
   }
 
-  get connected() {
-    return this._wsc.connected
+  close(reason) {
+    this.#wsc.close(reason)
   }
 
-  async call(method, ...args) {
-    const id = ++this._callLastId
-    const call = new TimeoutCall(this._cfg.timeout)
-    this._calls[id] = call
+  async rpc(method, ...args) {
+    let id = ++this.#callId
+    let msg = rpcNew(id, method, args)
 
-    try {
-      await this._send(method, args, id)
-      return await call.result
-    }
-    finally {
-      call.clean()
-      delete this._calls[id]
-    }
+    return this.#call(msg)
   }
 
   on(name, fn) {
-    this._emitter.on(name, fn)
+    this.#emitter.on(name, fn)
   }
 
-  emit(name, ...args) {
-    if (!isStr(name)) {
-      throw new Error("event name must be strings")
-    }
+  async emit(event, ...args) {
+    is.str(event) || 'event must be a string'()
 
-    return this._send(name, args)
+    let msg = eventNew(event, args)
+    return this.#send(msg)
   }
 
 
-  _setEncoder = event => {
-    const {protocol} = event.target
-    const name = protocol.startsWith(RpcPrefix)
-      ? protocol.split('.')[1]
-      : JsonEncoder.name
-
-    this._encoder = this._cfg.encoders[name]
-    if (!this._encoder) {
-      throw new Error(`encoder ${name} not in config list`)
-    }
-  }
-
-  _process = async msgs => {
+  #handle = async msg => {
     try {
-      msgs = await preprocessMessage(msgs)
-      msgs = await this._encoder.decode(msgs)
-    } catch (e) {
-      console.warn("server decode error", e)
-      return
+      msg = await this.#encoder.decode(msg)
+      await batch(msg, msgs => msgs.forEach(this.#msg))
     }
-
-    if (!isArr(msgs)) msgs = [msgs]
-    msgs.forEach(this._msg)
+    catch (e) {
+      this.#emitter.emit(wscl.events.Error, e)
+    }
   }
 
-  _msg = msg => {
-    try {
-      msg = msgParse(msg)
-    } catch (e) {
-      console.warn("message parse error", e)
-      return
-    }
-
-    const {type, id, method, args, result, error} = msg
+  #msg = msg => {
+    let {type, id, method, args, result, error} = msgParse(msg)
 
     switch (type) {
-      case MsgType.Event:
-        return this._emitter.emit(method, ...args)
+      case types.Event:
+        return this.#emitter.emit(method, ...args)
 
-      case MsgType.Response:
-        return this._calls[id]?.success(result)
+      case types.Response:
+        return this.#calls.get(id)?.ok(result)
 
-      case MsgType.Error:
-        const e = new RpcError(error)
-        return this._calls[id]?.error(e)
+      case types.Error:
+        return this.#calls.get(id)?.fail(error)
     }
   }
 
-  async _send(method, args, id) {
-    let msg = {id, method, params: makeParams(args)}
-    msgSetVersion(msg)
+  async #call(msg) {
+    return new Promise(async (resolve, reject) => {
+      let {id, method} = msg
 
-    await this._wsc.ready // wait encoder choose
-    msg = await this._encoder.encode(msg)
+      let timer
+      let clean = () => {
+        clearTimeout(timer)
+        this.#calls.delete(id)
+      }
 
-    return this._wsc.send(msg)
-  }
+      let ok = result => clean() || resolve(result)
+      let fail = error => clean() || reject(new RpcError(id, method, error))
+      let timeout = () => clean() || reject(new RpcTimeout(id, method, this.#timeout))
 
-  _reemit = event => {
-    return (...args) => this._emitter.emit(event, ...args)
-  }
-}
+      let call = {ok, fail}
+      this.#calls.set(id, call)
 
-class TimeoutCall {
-  result
-  _resolve
-  _reject
-  _timer
+      timer = setTimeout(timeout, this.#timeout)
 
-  constructor(ms) {
-    this.result = new Promise((resolve, reject) => {
-      this._resolve = resolve
-      this._reject = reject
-      this._timer = setTimeout(() => {
-        reject(new TimeoutError(ms))
-      }, ms)
+      try {
+        await this.#send(msg)
+      }
+      catch (e) {
+        fail(e)
+      }
     })
   }
 
-  success(data) {
-    this._resolve(data)
+  async #send(msg) {
+    await this.#wsc.ready // wait encoder choose
+    msg = await this.#encoder.encode(msg)
+    return this.#wsc.send(msg)
   }
 
-  error(error) {
-    this._reject(error)
-  }
+  #setEncoder = event => {
+    let {protocol} = event.target
+    let name = encoderName(protocol)
+    this.#encoder = this.#encoders.get(name)
 
-  clean() {
-    clearTimeout(this._timer)
-  }
-}
+    if (!this.#encoder) {
+      this.#wsc.close('invalid encoder protocol')
 
-function preprocessMessage(msg) {
-  return new Promise(resolve => {
-    if (!(msg instanceof Blob)) {
-      return resolve(msg)
+      let e = new Error(`invalid protocol '${protocol}' received from server`)
+      this.#emitter.emit(wscl.events.Error, e)
     }
+  }
 
-    const reader = new FileReader()
-    reader.addEventListener('load', e => resolve(e.target.result))
-    reader.readAsArrayBuffer(msg)
-  })
+  #reemitter = event => (...args) =>
+    this.#emitter.emit(event, ...args)
 }

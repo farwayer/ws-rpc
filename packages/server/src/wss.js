@@ -1,50 +1,37 @@
-import {createNanoEvents} from 'nanoevents'
 import {WebSocketServer} from 'ws'
-import {WSEvents} from './const.js'
 
 
-export default class WSServer {
-  #ws
+export class WSServer extends WebSocketServer {
   #pingTimer
-  #emitter = createNanoEvents()
 
-  constructor(wsOpt, cfg = {}) {
-    const {pingInterval} = cfg
-    if (!pingInterval) {
-      throw new Error(`cfg.pingInterval required`)
-    }
+  constructor(cfg = {}) {
+    let {pingInterval = 3000, ...wsOpts} = cfg
+    super(wsOpts)
 
-    this.#ws = new WebSocketServer(wsOpt)
-
-    this.#ws.on(WSEvents.Connection, ws => {
+    this.on('connection', ws => {
       ws.alive = true
 
-      ws.on(WSEvents.Pong, function () {
-        this.alive = true
+      ws.on('pong', () => {
+        ws.alive = true
       })
     })
 
-    this.#pingTimer = setInterval(() => {
-      this.#ws.clients.forEach(ws => {
-        if (!ws.alive) {
-          return ws.terminate()
-        }
-
-        ws.alive = false
-        ws.ping()
-      })
-    }, pingInterval)
+    this.#pingTimer = setInterval(this.#checkClients, pingInterval)
   }
 
-  close() {
+  close(cb) {
     clearInterval(this.#pingTimer)
-    this.#ws.close(...arguments)
+    super.close(cb)
   }
 
-  on(event, cb) {
-    this.#emitter.on(event, cb)
-    this.#ws.on(event, (...args) => {
-      this.#emitter.emit(event, ...args)
-    })
+  #checkClients = () => {
+    for (let ws of this.clients) {
+      if (!ws.alive) {
+        return ws.terminate()
+      }
+
+      ws.alive = false
+      ws.ping()
+    }
   }
 }
