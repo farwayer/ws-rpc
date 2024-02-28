@@ -37,4 +37,4 @@ export class RpcTimeout extends RpcError {
   timeout: number
 }
 
-export const Connected: typeof events.Connected
+export {events}

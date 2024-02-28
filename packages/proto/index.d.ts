@@ -39,6 +39,7 @@ declare namespace errors {
 
 declare namespace events {
   const Connected: 'rpc.connected'
+  const Disconnected: 'rpc.disconnected'
 }
 
 declare namespace types {

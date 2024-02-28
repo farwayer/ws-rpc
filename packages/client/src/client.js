@@ -1,7 +1,7 @@
 import * as wscl from 'wscl'
 import * as is from 'istp'
 import {
-  types, msgParse, rpcNew, eventNew, protocol, encoderName, batch,
+  types, msgParse, rpcNew, eventNew, protocol, encoderName, batch, events,
 } from '@ws-rpc/proto'
 import {JsonEncoder} from '@ws-rpc/encoder-json'
 import {RpcError, RpcTimeout} from './errors.js'
@@ -53,6 +53,7 @@ export class Client {
   }
 
   close(reason) {
+    this.onevent?.(events.Disconnected)
     this.#wsc.close(reason)
   }
 

@@ -30,14 +30,14 @@ export class Server {
     let {
       encoders = [],
       maxBatch = 128,
-      rpc, event,
+      onrpc, onevent,
       context = {},
       ...wssOpts
     } = cfg
 
     this.#maxBatch = maxBatch
-    this.onrpc = rpc
-    this.onevent = event
+    this.onrpc = onrpc
+    this.onevent = onevent
     this.context = context
 
     for (let encoder of encoders) {

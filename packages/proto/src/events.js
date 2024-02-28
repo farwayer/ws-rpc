@@ -1,4 +1,2 @@
-import {RpcPrefix} from './const.js'
-
-
-export let Connected = RpcPrefix + 'connected'
+export let Connected = 'jsonrpc.connected'
+export let Disconnected = 'jsonrpc.disconnected'
