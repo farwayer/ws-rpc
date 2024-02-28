@@ -38,8 +38,8 @@ declare namespace errors {
 }
 
 declare namespace events {
-  const Connected: 'rpc.connected'
-  const Disconnected: 'rpc.disconnected'
+  const Connected: 'jsonrpc.connected'
+  const Disconnected: 'jsonrpc.disconnected'
 }
 
 declare namespace types {

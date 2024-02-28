@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/proto",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "jsonrpc 2.0 protocol basics",
   "license": "WTFPL",
   "author": "farwayer <farwayer@gmail.com>",
