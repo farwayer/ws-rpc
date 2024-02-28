@@ -36,8 +36,10 @@ export class Client {
     wscOpts.protocols = Array.from(this.#encoders.keys()).map(protocol)
 
     this.#wsc = new wscl.Client(wscOpts)
-    this.#wsc.on(wscl.events.Open, this.#chooseEncoder)
-    this.#wsc.on(wscl.events.Message, this.#handleWsMsg)
+    this.#wsc.on(wscl.events.Open, this.#wsOpen)
+    this.#wsc.on(wscl.events.Close, this.#wsClose)
+    this.#wsc.on(wscl.events.Error, this.#wsError)
+    this.#wsc.on(wscl.events.Message, this.#wsMessage)
   }
 
   async connect() {
@@ -49,7 +51,6 @@ export class Client {
   }
 
   close(reason) {
-    this.onevent?.(events.Disconnected)
     this.#wsc.close(reason)
   }
 
@@ -72,7 +73,27 @@ export class Client {
   }
 
 
-  #handleWsMsg = async msg => {
+  #wsOpen = event => {
+    let {protocol} = event.target
+    let name = encoderName(protocol)
+    this.#encoder = this.#encoders.get(name)
+
+    if (!this.#encoder) {
+      this.#wsc.close('invalid encoder protocol')
+
+      this.onerror?.(
+        new Error(`invalid protocol '${protocol}' received from server`)
+      )
+    }
+  }
+
+  #wsClose = () =>
+    this.onevent?.(events.Disconnected)
+
+  #wsError = err =>
+    this.onerror?.(err)
+
+  #wsMessage = async msg => {
     try {
       msg = await this.#encoder.decode(msg)
       await batch(msg, msgs => msgs.forEach(this.#msg))
@@ -129,19 +150,5 @@ export class Client {
     await this.#wsc.ready // wait encoder choose
     msg = await this.#encoder.encode(msg)
     return this.#wsc.send(msg)
-  }
-
-  #chooseEncoder = event => {
-    let {protocol} = event.target
-    let name = encoderName(protocol)
-    this.#encoder = this.#encoders.get(name)
-
-    if (!this.#encoder) {
-      this.#wsc.close('invalid encoder protocol')
-
-      this.onerror?.(
-        new Error(`invalid protocol '${protocol}' received from server`)
-      )
-    }
   }
 }
