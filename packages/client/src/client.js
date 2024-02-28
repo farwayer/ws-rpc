@@ -33,13 +33,9 @@ export class Client {
       this.#encoders.set(encoder.name, encoder)
     }
 
-    let protocols = encoders
-      .concat(JsonEncoder)
-      .map(encoder => protocol(encoder.name))
+    wscOpts.protocols = Array.from(this.#encoders.keys()).map(protocol)
 
-    wscOpts = {protocols, ...wscOpts}
     this.#wsc = new wscl.Client(wscOpts)
-
     this.#wsc.on(wscl.events.Open, this.#setEncoder)
     this.#wsc.on(wscl.events.Message, this.#handle)
   }
