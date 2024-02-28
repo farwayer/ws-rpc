@@ -15,6 +15,11 @@ export class RpcError extends Error {
     if (this.data) str += ` data='${JSON.stringify(this.data)}'`
     return str
   }
+
+  toJSON() {
+    let {id, method, code, message, data} = this
+    return {id, code, message, method, data}
+  }
 }
 
 export class RpcTimeout extends RpcError {
