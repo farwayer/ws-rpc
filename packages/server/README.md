@@ -1,6 +1,6 @@
 # ws-rpc
 
-*Simple, small rfc-correct JSON-RPC 2.0 implementation, client and server*
+*Simple, small rfc-correct JSON-RPC 2.0 implementation with encoders support
 
 ## Usage
 
@@ -8,15 +8,17 @@
 
 ```js
 import {Server} from '@ws-rpc/server'
+import {MsgpackEncoder} from '@ws-rpc/encoder-msgpack'
 
 // see ws lib options
 let wss = new Server({
   port: 8081,
+  encoders: [MsgpackEncoder], // json by default
+  context: {db},
 })
-wss.context = {db}
 
-let bookUpsert = async (ctx, id, data) => {
-  let {book, created} = await ctx.db.bookUpsert(id, data)
+let bookUpsert = async (ctx, data) => {
+  let {book, created} = await ctx.db.bookUpsert(data)
   
   if (created) {
     ctx.emit('book.created', book) // emit event to current client
@@ -26,9 +28,7 @@ let bookUpsert = async (ctx, id, data) => {
   return book
 }
 
-wss.rpc = async (ctx, ...args) => {
-  let {method, client, db} = ctx
-  
+wss.onrpc = async (ctx, method, ...args) => {
   switch (method) {
     case 'book.upsert':
       return bookUpsert(ctx, ...args)
@@ -37,29 +37,12 @@ wss.rpc = async (ctx, ...args) => {
   }
 }
 
-wss.event = (name, ...args) => {
+wss.onevent = (name, ...args) => {
   // process event from client
 }
 ```
 
 ### Client
-
-```js
-import {Client} from '@ws-rpc/client'
-
-let wsc = await new Client({
-  url: 'ws://localhost:8080',
-}).connect()
-
-wsc.event = (event, ...args) => {
-  // process event from server
-}
-
-let book = await wsc.rpc('book.upsert', {
-  name: 'Dune',
-  author: 'Franklin Patrick Herbert',
-})
-```
 
 ```js
 import {Client} from '@ws-rpc/client'
@@ -69,4 +52,13 @@ let wsc = await new Client({
   url: 'ws://localhost:8080',
   encoders: [MsgpackEncoder], // json by default
 }).connect()
+
+wsc.onevent = (event, ...args) => {
+  // process event from server
+}
+
+let book = await wsc.rpc('book.upsert', {
+  name: 'Dune',
+  author: 'Franklin Patrick Herbert',
+})
 ```
