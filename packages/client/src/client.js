@@ -36,8 +36,8 @@ export class Client {
     wscOpts.protocols = Array.from(this.#encoders.keys()).map(protocol)
 
     this.#wsc = new wscl.Client(wscOpts)
-    this.#wsc.on(wscl.events.Open, this.#setEncoder)
-    this.#wsc.on(wscl.events.Message, this.#handle)
+    this.#wsc.on(wscl.events.Open, this.#chooseEncoder)
+    this.#wsc.on(wscl.events.Message, this.#handleWsMsg)
   }
 
   async connect() {
@@ -72,7 +72,7 @@ export class Client {
   }
 
 
-  #handle = async msg => {
+  #handleWsMsg = async msg => {
     try {
       msg = await this.#encoder.decode(msg)
       await batch(msg, msgs => msgs.forEach(this.#msg))
@@ -131,7 +131,7 @@ export class Client {
     return this.#wsc.send(msg)
   }
 
-  #setEncoder = event => {
+  #chooseEncoder = event => {
     let {protocol} = event.target
     let name = encoderName(protocol)
     this.#encoder = this.#encoders.get(name)
