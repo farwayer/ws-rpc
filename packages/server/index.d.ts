@@ -14,7 +14,7 @@ export type Context<C extends object = {}> = C & {
   emit: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean>
   emitAll: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean[]>
   throw: typeof throwRpcError
-  throwMethodNotFound: typeof throwMethodNotFound
+  throwMethodNotFound: () => void
 }
 
 export type OnRpc<C extends object> = <Args extends any[], R>(
