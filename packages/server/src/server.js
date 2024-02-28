@@ -32,7 +32,7 @@ export class Server {
       maxBatch = 128,
       rpc, event,
       context = {},
-      ...wssOpts,
+      ...wssOpts
     } = cfg
 
     this.#maxBatch = maxBatch
