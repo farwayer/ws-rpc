@@ -1,5 +1,5 @@
 import {WebSocket, ServerOptions} from 'ws'
-import {Encoder, Id, RpcError} from '@ws-rpc/proto'
+import {Encoder, Id, RpcError, events} from '@ws-rpc/proto'
 
 
 export type Client = {
@@ -68,3 +68,5 @@ export class Server<C extends object> {
 
 export function throwRpcError(error: RpcError): void
 export function throwMethodNotFound(id: Id, method: string): void
+
+export {events}
