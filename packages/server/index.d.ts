@@ -46,8 +46,8 @@ export class Server<C extends object> {
 
   readonly clientIds: string[]
 
-  rpc: OnRpc<Context<C>>
-  event: OnEvent<Context<C>>
+  rpc?: OnRpc<Context<C>>
+  event?: OnEvent<Context<C>>
   context: C
 
   getClient(id: string): Client | undefined
