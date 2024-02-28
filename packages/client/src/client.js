@@ -8,8 +8,8 @@ import {RpcError, RpcTimeout} from './errors.js'
 
 
 export class Client {
-  event
-  error
+  onevent
+  onerror
 
   #timeout
   #wsc
@@ -23,10 +23,10 @@ export class Client {
   }
 
   constructor(cfg = {}) {
-    let {event, error, encoders = [], timeout = 30000, ...wscOpts} = cfg
+    let {onevent, onerror, encoders = [], timeout = 30000, ...wscOpts} = cfg
 
-    this.event = event
-    this.error = error
+    this.onevent = onevent
+    this.onerror = onerror
     this.#timeout = timeout
 
     for (let encoder of encoders) {
@@ -81,7 +81,7 @@ export class Client {
       await batch(msg, msgs => msgs.forEach(this.#msg))
     }
     catch (e) {
-      this.error?.(e)
+      this.onerror?.(e)
     }
   }
 
@@ -90,7 +90,7 @@ export class Client {
 
     switch (type) {
       case types.Event:
-        return this.event?.(method, ...args)
+        return this.onevent?.(method, ...args)
 
       case types.Response:
         return this.#calls.get(id)?.ok(result)
@@ -142,7 +142,7 @@ export class Client {
     if (!this.#encoder) {
       this.#wsc.close('invalid encoder protocol')
 
-      this.error?.(
+      this.onerror?.(
         new Error(`invalid protocol '${protocol}' received from server`)
       )
     }

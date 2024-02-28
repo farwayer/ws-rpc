@@ -5,8 +5,8 @@ export type OnEvent = <Args extends any[]>(event: string, ...args: Args) => void
 export type OnError = (error: any) => void
 
 export type Config = wscl.Config & {
-  event?: OnEvent
-  error?: OnError
+  onevent?: OnEvent
+  onerror?: OnError
   encoders?: Encoder[]
   timeout?: number
 }
@@ -14,8 +14,8 @@ export type Config = wscl.Config & {
 export class Client {
   constructor(cfg: Config)
 
-  event?: OnEvent
-  error?: OnError
+  onevent?: OnEvent
+  onerror?: OnError
 
   readonly connected: boolean
 

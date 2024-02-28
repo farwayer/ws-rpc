@@ -13,8 +13,8 @@ import {
 
 
 export class Server {
-  rpc
-  event
+  onrpc
+  onevent
   context
 
   #maxBatch
@@ -36,8 +36,8 @@ export class Server {
     } = cfg
 
     this.#maxBatch = maxBatch
-    this.rpc = rpc
-    this.event = event
+    this.onrpc = rpc
+    this.onevent = event
     this.context = context
 
     for (let encoder of encoders) {
@@ -173,19 +173,19 @@ export class Server {
 
     if (type === types.Event) {
       try {
-        this.event?.(ctx, method, ...args)
+        this.onevent?.(ctx, method, ...args)
       }
       // we should not throw if event handler failed
       catch {}
       return
     }
 
-    if (!this.rpc) {
+    if (!this.onrpc) {
       return errors.methodNotFound(id, method)
     }
 
     try {
-      let result = await this.rpc(ctx, method, ...args)
+      let result = await this.onrpc(ctx, method, ...args)
       return resNew(id, result)
     }
     catch (e) {

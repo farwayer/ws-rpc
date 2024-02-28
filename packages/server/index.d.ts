@@ -36,8 +36,8 @@ type WSSConfig = ServerOptions & {
 export type Config<C extends object> = WSSConfig & {
   encoders?: Encoder[]
   maxBatch?: number
-  rpc?: OnRpc<Context<C>>
-  event?: OnEvent<Context<C>>
+  onrpc?: OnRpc<Context<C>>
+  onevent?: OnEvent<Context<C>>
   context?: C
 }
 
@@ -46,8 +46,8 @@ export class Server<C extends object> {
 
   readonly clientIds: string[]
 
-  rpc?: OnRpc<Context<C>>
-  event?: OnEvent<Context<C>>
+  onrpc?: OnRpc<Context<C>>
+  onevent?: OnEvent<Context<C>>
   context: C
 
   getClient(id: string): Client | undefined

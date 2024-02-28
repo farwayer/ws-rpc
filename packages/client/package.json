@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/client",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
@@ -15,7 +15,7 @@
     "@ws-rpc/proto": "workspace:*",
     "istp": "^2.0.5",
     "nanoevents": "^9.0.0",
-    "wscl": "^2.0.10"
+    "wscl": "^2.0.11"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^11.0.2",
