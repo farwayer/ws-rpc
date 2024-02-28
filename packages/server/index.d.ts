@@ -38,7 +38,7 @@ export type Config<C extends object> = WSSConfig & {
   maxBatch?: number
   onrpc?: OnRpc<Context<C>>
   onevent?: OnEvent<Context<C>>
-  context?: C
+  ctx?: C
 }
 
 export class Server<C extends object> {
@@ -48,7 +48,7 @@ export class Server<C extends object> {
 
   onrpc?: OnRpc<Context<C>>
   onevent?: OnEvent<Context<C>>
-  context: C
+  ctx: C
 
   getClient(id: string): Client | undefined
   hasClient(id: string): boolean

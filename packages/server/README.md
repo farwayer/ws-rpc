@@ -14,7 +14,7 @@ import {MsgpackEncoder} from '@ws-rpc/encoder-msgpack'
 let wss = new Server({
   port: 8081,
   encoders: [MsgpackEncoder], // json by default
-  context: {db},
+  ctx: {db},
 })
 
 let bookUpsert = async (ctx, data) => {

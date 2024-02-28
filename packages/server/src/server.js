@@ -15,7 +15,7 @@ import {
 export class Server {
   onrpc
   onevent
-  context
+  ctx
 
   #maxBatch
   #wss
@@ -31,14 +31,14 @@ export class Server {
       encoders = [],
       maxBatch = 128,
       onrpc, onevent,
-      context = {},
+      ctx = {},
       ...wssOpts
     } = cfg
 
     this.#maxBatch = maxBatch
     this.onrpc = onrpc
     this.onevent = onevent
-    this.context = context
+    this.ctx = ctx
 
     for (let encoder of encoders) {
       this.#encoders.set(encoder.name, encoder)
@@ -168,7 +168,7 @@ export class Server {
       emitAll: this.emitAll.bind(this),
       throw: throwRpcError,
       throwMethodNotFound: () => throwMethodNotFound(id, method),
-      ...this.context,
+      ...this.ctx,
     }
 
     if (type === types.Event) {
