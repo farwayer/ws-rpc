@@ -1,6 +1,8 @@
 # ws-rpc
 
-*Simple, small rfc-correct JSON-RPC 2.0 implementation with encoders support
+*Simple, small rfc-correct JSON-RPC 2.0 implementation with encoders support*
+
+Supports binary data in requests with `MsgpackEncoder`
 
 ## Usage
 
@@ -60,5 +62,6 @@ wsc.onevent = (event, ...args) => {
 let book = await wsc.rpc('book.upsert', {
   name: 'Dune',
   author: 'Franklin Patrick Herbert',
+  cover: new Uint8Array(),
 })
 ```
