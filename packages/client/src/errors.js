@@ -1,11 +1,7 @@
 export class RpcError extends Error {
   constructor(id, method, error) {
-    let {code, message, data} = error
-    super(message)
-    this.id = id
-    this.method = method
-    this.code = code
-    this.data = data
+    super(error.message)
+    Object.assign(this, error, {id, method})
   }
 
   toString() {
