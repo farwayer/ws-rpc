@@ -1,5 +1,4 @@
 import * as wscl from 'wscl'
-import * as is from 'istp'
 import {
   types, msgParse, rpcNew, eventNew, protocol, encoderName, batch, events,
 } from '@ws-rpc/proto'
@@ -66,7 +65,7 @@ export class Client {
   }
 
   async emit(event, ...args) {
-    is.str(event) || 'event must be a string'()
+    typeof event === 'string' || 'event must be a string'()
 
     let msg = eventNew(event, args)
     return this.#send(msg)

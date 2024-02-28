@@ -326,8 +326,6 @@ __metadata:
     "@size-limit/preset-small-lib": "npm:^11.0.2"
     "@ws-rpc/encoder-json": "workspace:*"
     "@ws-rpc/proto": "workspace:*"
-    istp: "npm:^2.0.5"
-    nanoevents: "npm:^9.0.0"
     size-limit: "npm:^11.0.2"
     wscl: "npm:^2.0.11"
   languageName: unknown
