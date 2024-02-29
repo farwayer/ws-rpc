@@ -92,7 +92,8 @@ export class Server {
   }
 
   async emitAll(event, ...args) {
-    return this.emit(this.clientIds, event, ...args)
+    let clientIds = Array.from(this.clientIds)
+    return this.emit(clientIds, event, ...args)
   }
 
   onWs(event, cb) {
