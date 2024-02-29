@@ -8,23 +8,23 @@ export type Client = {
   ws: WebSocket
 }
 
-export type Context<C extends object = {}> = C & {
-  client: Client
-  method: string
+export type Context<C extends Client, Ctx extends object> = Ctx & {
+  client: C
+  wss: Server<C, Ctx>
   emit: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean>
   emitAll: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean[]>
   throw: typeof throwRpcError
   throwMethodNotFound: () => void
 }
 
-export type OnRpc<C extends object> = <Args extends any[], R>(
-  ctx: Context<C>,
+export type OnRpc<C extends Client, Ctx extends object> = <Args extends any[], R>(
+  ctx: Context<C, Ctx>,
   method: string,
   ...args: Args,
 ) => Promise<R>
 
-export type OnEvent<C extends object> = <Args extends any[]>(
-  ctx: Context<C>,
+export type OnEvent<C extends Client, Ctx extends object> = <Args extends any[]>(
+  ctx: Context<C, Ctx>,
   event: string,
   ...args: Args,
 ) => void
@@ -33,19 +33,19 @@ type WSSConfig = ServerOptions & {
   pingInterval: number
 }
 
-export type Config<C extends object> = WSSConfig & {
+export type Config<C extends Client, Ctx extends object> = WSSConfig & {
   encoders?: Encoder[]
   maxBatch?: number
-  onrpc?: OnRpc<Context<C>>
-  onevent?: OnEvent<Context<C>>
-  ctx?: C
+  onrpc?: OnRpc<C, Ctx>
+  onevent?: OnEvent<C, Ctx>
+  ctx?: Ctx
 }
 
-export class Server<Ctx extends object, C extends Client> {
-  constructor(cfg: Config<Ctx>)
+export class Server<C extends Client, Ctx extends object = {}> {
+  constructor(cfg: Config<C, Ctx>)
 
-  onrpc?: OnRpc<Context<Ctx>>
-  onevent?: OnEvent<Context<Ctx>>
+  onrpc?: OnRpc<C, Ctx>
+  onevent?: OnEvent<C, Ctx>
   ctx: Ctx
 
   readonly clientIds: IterableIterator<string>
