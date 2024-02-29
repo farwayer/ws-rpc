@@ -169,6 +169,7 @@ export class Server {
 
     let ctx = {
       client,
+      wss: this,
       emit: this.emit.bind(this, client.id),
       emitAll: this.emitAll.bind(this),
       throw: throwRpcError,
