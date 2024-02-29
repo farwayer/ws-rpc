@@ -14,7 +14,7 @@
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
     "bufferutil": "^4.0.8",
-    "istp": "^2.0.5",
+    "istp": "^2.0.6",
     "ws": "^8.16.0"
   },
   "keywords": [

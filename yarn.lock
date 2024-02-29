@@ -349,7 +349,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ws-rpc/proto@workspace:packages/proto"
   dependencies:
-    istp: "npm:^2.0.5"
+    istp: "npm:^2.0.6"
   languageName: unknown
   linkType: soft
 
@@ -360,7 +360,7 @@ __metadata:
     "@ws-rpc/encoder-json": "workspace:*"
     "@ws-rpc/proto": "workspace:*"
     bufferutil: "npm:^4.0.8"
-    istp: "npm:^2.0.5"
+    istp: "npm:^2.0.6"
     ws: "npm:^8.16.0"
   languageName: unknown
   linkType: soft
@@ -953,10 +953,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istp@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "istp@npm:2.0.5"
-  checksum: 10/85374aa12988597af9dfea7219b7a7c5452c1b50dc91ecfa64e47ae9962f6fc3f2a7d8cf2a7cab52944d5dcfda40059b1194f1a0c3e9e5afbb45f980377f4be7
+"istp@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "istp@npm:2.0.6"
+  checksum: 10/f6827536139ad3693284d71c12c2afde86f80f032d5cc9a1c061d9a927972f24a2931ac1f474bac8de71c0b47a710af6e5ff168b0d81ac3bddab4cfd705e4070
   languageName: node
   linkType: hard
 
