@@ -41,17 +41,18 @@ export type Config<C extends object> = WSSConfig & {
   ctx?: C
 }
 
-export class Server<C extends object> {
-  constructor(cfg: Config<C>)
+export class Server<Ctx extends object, C extends Client> {
+  constructor(cfg: Config<Ctx>)
 
-  readonly clientIds: string[]
+  onrpc?: OnRpc<Context<Ctx>>
+  onevent?: OnEvent<Context<Ctx>>
+  ctx: Ctx
 
-  onrpc?: OnRpc<Context<C>>
-  onevent?: OnEvent<Context<C>>
-  ctx: C
-
-  getClient(id: string): Client | undefined
+  readonly clientIds: IterableIterator<string>
+  readonly clients: IterableIterator<C>
+  getClient(id: string): C | undefined
   hasClient(id: string): boolean
+
   onWs(
     wsEvent: 'connection' | 'close' | 'message' | 'error' | 'headers' | 'wsClientError',
     cb: () => void, // TODO

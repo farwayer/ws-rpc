@@ -22,10 +22,6 @@ export class Server {
   #encoders = new Map().set(JsonEncoder.name, JsonEncoder)
   #clients = new Map()
 
-  get clientIds() {
-    return Array.from(this.#clients.keys())
-  }
-
   constructor(cfg = {}) {
     let {
       encoders = [],
@@ -50,6 +46,14 @@ export class Server {
     }
     this.#wss = new WSServer(wssOpts)
     this.#wss.on('connection', this.#wsConnected)
+  }
+
+  get clientIds() {
+    return this.#clients.keys()
+  }
+
+  get clients() {
+    return this.#clients.values()
   }
 
   hasClient(id) {
