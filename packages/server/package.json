@@ -1,8 +1,8 @@
 {
   "name": "@ws-rpc/server",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "license": "WTFPL",
-  "description": "TODO",
+  "description": "Simple, small rfc-correct JSON-RPC 2.0 implementation with encoders support",
   "author": "farwayer <farwayer@gmail.com>",
   "repository": "farwayer/ws-rpc",
   "type": "module",
@@ -16,5 +16,13 @@
     "bufferutil": "^4.0.8",
     "istp": "^2.0.5",
     "ws": "^8.16.0"
-  }
+  },
+  "keywords": [
+    "rpc",
+    "websocket",
+    "jsonrpc",
+    "api",
+    "client",
+    "server"
+  ]
 }
