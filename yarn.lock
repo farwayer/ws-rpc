@@ -319,9 +319,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ws-rpc/client@workspace:packages/client":
+"@ws-rpc/client@workspace:pkgs/client":
   version: 0.0.0-use.local
-  resolution: "@ws-rpc/client@workspace:packages/client"
+  resolution: "@ws-rpc/client@workspace:pkgs/client"
   dependencies:
     "@size-limit/preset-small-lib": "npm:^11.1.2"
     "@ws-rpc/encoder-json": "workspace:*"
@@ -331,31 +331,31 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ws-rpc/encoder-json@workspace:*, @ws-rpc/encoder-json@workspace:packages/encoder-json":
+"@ws-rpc/encoder-json@workspace:*, @ws-rpc/encoder-json@workspace:pkgs/encoder-json":
   version: 0.0.0-use.local
-  resolution: "@ws-rpc/encoder-json@workspace:packages/encoder-json"
+  resolution: "@ws-rpc/encoder-json@workspace:pkgs/encoder-json"
   languageName: unknown
   linkType: soft
 
-"@ws-rpc/encoder-msgpack@workspace:packages/encoder-msgpack":
+"@ws-rpc/encoder-msgpack@workspace:pkgs/encoder-msgpack":
   version: 0.0.0-use.local
-  resolution: "@ws-rpc/encoder-msgpack@workspace:packages/encoder-msgpack"
+  resolution: "@ws-rpc/encoder-msgpack@workspace:pkgs/encoder-msgpack"
   dependencies:
     msgpackr: "npm:^1.10.1"
   languageName: unknown
   linkType: soft
 
-"@ws-rpc/proto@workspace:*, @ws-rpc/proto@workspace:packages/proto":
+"@ws-rpc/proto@workspace:*, @ws-rpc/proto@workspace:pkgs/proto":
   version: 0.0.0-use.local
-  resolution: "@ws-rpc/proto@workspace:packages/proto"
+  resolution: "@ws-rpc/proto@workspace:pkgs/proto"
   dependencies:
     istp: "npm:^2.0.6"
   languageName: unknown
   linkType: soft
 
-"@ws-rpc/server@workspace:packages/server":
+"@ws-rpc/server@workspace:pkgs/server":
   version: 0.0.0-use.local
-  resolution: "@ws-rpc/server@workspace:packages/server"
+  resolution: "@ws-rpc/server@workspace:pkgs/server"
   dependencies:
     "@ws-rpc/encoder-json": "workspace:*"
     "@ws-rpc/proto": "workspace:*"

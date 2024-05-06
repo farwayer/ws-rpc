@@ -1,7 +1,7 @@
 {
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "pkgs/*"
   ],
   "scripts": {
     "publish": "yarn workspaces foreach --from '@ws-rpc/*' -R npm publish"

@@ -7,6 +7,6 @@ node_modules/
 browser/
 yarn-error.log
 
-packages/*/**/browser
-packages/*/**/index.browser.js
-packages/encoder-protobuf/rpc.cjs
+pkgs/*/**/browser
+pkgs/*/**/index.browser.js
+pkgs/encoder-protobuf/rpc.cjs
