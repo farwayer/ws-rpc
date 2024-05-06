@@ -13,11 +13,11 @@
   "dependencies": {
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
-    "wscl": "^2.0.11"
+    "wscl": "^2.0.12"
   },
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^11.0.2",
-    "size-limit": "^11.0.2"
+    "@size-limit/preset-small-lib": "^11.1.2",
+    "size-limit": "^11.1.2"
   },
   "size-limit": [
     {
