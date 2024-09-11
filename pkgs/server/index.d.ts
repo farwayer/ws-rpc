@@ -1,10 +1,11 @@
 import {WebSocket, ServerOptions} from 'ws'
-import {Encoder, Id, RpcError, events} from '@ws-rpc/proto'
+import * as proto from '@ws-rpc/proto'
+import {events} from '@ws-rpc/proto'
 
 
 export type Client = {
   id: string
-  encoder: Encoder
+  encoder: proto.Encoder
   ws: WebSocket
 }
 
@@ -34,7 +35,7 @@ type WSSConfig = ServerOptions & {
 }
 
 export type Config<C extends Client, Ctx extends object> = WSSConfig & {
-  encoders?: Encoder[]
+  encoders?: proto.Encoder[]
   maxBatch?: number
   onrpc?: OnRpc<C, Ctx>
   onevent?: OnEvent<C, Ctx>
@@ -68,6 +69,11 @@ export class Server<C extends Client, Ctx extends object = {}> {
 }
 
 export function throwRpcError(error: RpcError): void
-export function throwMethodNotFound(id: Id, method: string): void
+export function throwMethodNotFound(id: proto.Id, method: string): void
+
+export interface SendError extends Error {}
+export interface EncoderError extends Error {}
+export interface RpcError extends Error {}
+export interface SendError extends Error, proto.ErrorMessage {}
 
 export {events}

@@ -8,8 +8,6 @@ export let throwRpcError = (error) => {
 export let throwMethodNotFound = (id, method) =>
   throwRpcError(errors.methodNotFound(id, method).error)
 
-
-// internal
 export class SendError extends Error {}
 export class EncoderError extends Error {}
 export class RpcError extends Error {
@@ -18,9 +16,3 @@ export class RpcError extends Error {
     Object.assign(this, error)
   }
 }
-
-export let responseToServer = (id) =>
-  errors.invalidRequest(id, "client must not send response message to server")
-
-export let errorToServer = (id) =>
-  errors.invalidRequest(id, "client must not send error message to server")

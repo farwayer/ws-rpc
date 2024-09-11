@@ -7,8 +7,7 @@ import {
 import {JsonEncoder} from '@ws-rpc/encoder-json'
 import {WSServer} from './wss.js'
 import {
-  SendError, RpcError, throwRpcError, throwMethodNotFound,
-  errorToServer, responseToServer, EncoderError,
+  SendError, RpcError, throwRpcError, throwMethodNotFound, EncoderError,
 } from './errors.js'
 
 
@@ -236,6 +235,7 @@ export class Server {
 }
 
 
+// internal
 let send = async (client, msg, opt = {}) => {
   let encoder = opt.encoder ?? client.encoder
 
@@ -269,6 +269,11 @@ let wsSend = (ws, data) =>
     }
   })
 
-
 let randomId = () =>
   randomBytes(16).toString('base64url')
+
+export let responseToServer = (id) =>
+  errors.invalidRequest(id, "client must not send response message to server")
+
+export let errorToServer = (id) =>
+  errors.invalidRequest(id, "client must not send error message to server")

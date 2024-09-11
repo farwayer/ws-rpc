@@ -1,2 +1,2 @@
 export * from './server.js'
-export {throwRpcError, throwMethodNotFound} from './errors.js'
+export * from './errors.js'
