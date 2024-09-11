@@ -191,6 +191,15 @@ export class Server {
 
     try {
       let result = await this.onrpc(ctx, method, ...args)
+
+      // this behavior is not standard
+      // we should always return a response or error to a valid request
+      // but sometimes there are situations when we may not do this
+      // rate-limiter as an example, which can drop requests without notification
+      if (result === $SuppressRpcResponse) {
+        return
+      }
+
       return resNew(id, result)
     }
     catch (e) {
