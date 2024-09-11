@@ -1,1 +1,1 @@
-export let $InternalSuppressRpcResponse = new Symbol('InternalSuppressRpcResponse')
+export let $InternalSuppressRpcResponse = Symbol('InternalSuppressRpcResponse')
