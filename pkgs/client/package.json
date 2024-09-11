@@ -7,7 +7,10 @@
   "repository": "farwayer/ws-rpc",
   "type": "module",
   "exports": {
-    ".": "./src/index.js",
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./src/index.js"
+    },
     "./package.json": "./package.json"
   },
   "dependencies": {
