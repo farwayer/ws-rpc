@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/server",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "license": "WTFPL",
   "description": "Simple, small rfc-correct JSON-RPC 2.0 implementation with encoders support",
   "author": "farwayer <farwayer@gmail.com>",
