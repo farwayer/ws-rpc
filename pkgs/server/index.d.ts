@@ -68,7 +68,7 @@ export class Server<C extends Client, Ctx extends object = {}> {
   emitAll<Args extends any[]>(event: string, ...args: Args): Promise<boolean[]>
 }
 
-export function throwRpcError(error: RpcError): void
+export function throwRpcError(error: proto.RpcError): void
 export function throwMethodNotFound(id: proto.Id, method: string): void
 
 export interface SendError extends Error {}
