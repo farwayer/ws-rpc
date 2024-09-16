@@ -9,6 +9,7 @@ import {WSServer} from './wss.js'
 import {
   SendError, RpcError, throwRpcError, throwMethodNotFound, EncoderError,
 } from './errors.js'
+import {$InternalSuppressRpcResponse} from './internal.js'
 
 
 export class Server {
@@ -196,7 +197,7 @@ export class Server {
       // we should always return a response or error to a valid request
       // but sometimes there are situations when we may not do this
       // rate-limiter as an example, which can drop requests without notification
-      if (result === $SuppressRpcResponse) {
+      if (result === $InternalSuppressRpcResponse) {
         return
       }
 
