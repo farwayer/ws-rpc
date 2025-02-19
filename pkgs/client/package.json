@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/client",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "license": "WTFPL",
   "description": "Simple, small rfc-correct JSON-RPC 2.0 implementation with encoders support",
   "author": "farwayer <farwayer@gmail.com>",
@@ -16,11 +16,11 @@
   "dependencies": {
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
-    "wscl": "^2.1.3"
+    "wscl": "^2.2.0"
   },
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^11.1.5",
-    "size-limit": "^11.1.5"
+    "@size-limit/preset-small-lib": "^11.2.0",
+    "size-limit": "^11.2.0"
   },
   "size-limit": [
     {

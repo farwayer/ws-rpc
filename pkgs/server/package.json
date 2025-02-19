@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/server",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "license": "WTFPL",
   "description": "Simple, small rfc-correct JSON-RPC 2.0 implementation with encoders support",
   "author": "farwayer <farwayer@gmail.com>",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
-    "bufferutil": "^4.0.8",
+    "bufferutil": "^4.0.9",
     "istp": "^2.0.6",
     "ws": "^8.18.0"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@ws-rpc/encoder-msgpack",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "WTFPL",
   "description": "TODO",
   "author": "farwayer <farwayer@gmail.com>",
@@ -11,6 +11,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "msgpackr": "^1.11.0"
+    "msgpackr": "^1.11.2"
   }
 }
