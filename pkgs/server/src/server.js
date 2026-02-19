@@ -108,11 +108,17 @@ export class Server {
     let client = {id, encoder, ws}
     this.#clients.set(id, client)
 
+	  ws.on('error', this.#wsError(id))
     ws.on('close', this.#wsCloseHandler(id))
     ws.on('message', this.#wsMessageHandler(client))
 
     this.emit(id, events.Connected, id)
   }
+
+	#wsError = clientId => (e) => {
+		this.#clients.delete(clientId)
+		this.#wss.emit('clientError', e, clientId)
+	}
 
   #wsCloseHandler = clientId => () =>
     this.#clients.delete(clientId)
