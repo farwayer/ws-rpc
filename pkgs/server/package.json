@@ -20,9 +20,9 @@
   "dependencies": {
     "@ws-rpc/encoder-json": "workspace:*",
     "@ws-rpc/proto": "workspace:*",
-    "bufferutil": "^4.0.9",
+    "bufferutil": "^4.1.0",
     "istp": "^2.0.6",
-    "ws": "^8.18.1"
+    "ws": "^8.19.0"
   },
   "keywords": [
     "rpc",

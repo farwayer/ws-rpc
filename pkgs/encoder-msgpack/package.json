@@ -11,6 +11,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "msgpackr": "^1.11.2"
+    "msgpackr": "^1.11.8"
   }
 }
