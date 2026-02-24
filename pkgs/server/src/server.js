@@ -12,6 +12,7 @@ import {$InternalSuppressRpcResponse} from './internal.js'
 export class Server {
 	onrpc
 	onevent
+	onconnected
 	ctx
 
 	#maxBatch
@@ -23,7 +24,7 @@ export class Server {
 		let {
 			encoders = [],
 			maxBatch = 128,
-			onrpc, onevent,
+			onrpc, onevent, onconnected,
 			ctx = {},
 			...wssOpts
 		} = cfg
@@ -31,6 +32,7 @@ export class Server {
 		this.#maxBatch = maxBatch
 		this.onrpc = onrpc
 		this.onevent = onevent
+		this.onconnected = onconnected
 		this.ctx = ctx
 
 		for (let encoder of encoders) {
@@ -99,7 +101,7 @@ export class Server {
 	}
 
 
-	#wsConnected = ws => {
+	#wsConnected = (ws, req) => {
 		let id = randomId()
 		let encoder = this.#getEncoder(ws.protocol)
 		let client = {id, encoder, ws}
@@ -109,6 +111,7 @@ export class Server {
 		ws.on('close', this.#wsCloseHandler(id))
 		ws.on('message', this.#wsMessageHandler(client))
 
+		this.onconnected?.(client, req)
 		this.emit(id, events.Connected, id)
 	}
 
