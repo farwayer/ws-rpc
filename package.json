@@ -4,7 +4,7 @@
     "pkgs/*"
   ],
   "scripts": {
-    "publish": "yarn workspaces foreach --from '@ws-rpc/*' -R yarn publish"
+    "publish": "yarn workspaces foreach --from '@ws-rpc/*' -R npm publish"
   },
   "packageManager": "yarn@4.12.0"
 }
