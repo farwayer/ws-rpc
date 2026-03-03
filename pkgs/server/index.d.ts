@@ -18,7 +18,7 @@ export type Context<
 	emit: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean>
 	emitAll: <Args extends any[]>(event: string, ...args: Args) => Promise<boolean[]>
 	throw: typeof throwRpcError
-	throwMethodNotFound: () => void
+	throwMethodNotFound: () => never
 }
 
 export type OnRpc<
@@ -92,9 +92,9 @@ export class Server<
 	emitAll<Args extends any[]>(event: string, ...args: Args): Promise<boolean[]>
 }
 
-export function throwRpcError(error: proto.RpcError): void
+export function throwRpcError(error: proto.RpcError): never
 
-export function throwMethodNotFound(id: proto.Id, method: string): void
+export function throwMethodNotFound(id: proto.Id, method: string): never
 
 export interface SendError extends Error {}
 export interface EncoderError extends Error {}
