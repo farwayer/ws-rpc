@@ -6,6 +6,7 @@
 node_modules/
 browser/
 yarn-error.log
+yarn.lock
 
 pkgs/*/**/browser
 pkgs/*/**/index.browser.js
