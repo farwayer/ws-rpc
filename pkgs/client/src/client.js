@@ -11,6 +11,7 @@ export class Client {
 
 	#timeout
 	#wsc
+	#id
 	#encoders = new Map().set(JsonEncoder.name, JsonEncoder)
 	#encoder
 	#callId = 0
@@ -18,6 +19,10 @@ export class Client {
 
 	get connected() {
 		return this.#wsc.connected
+	}
+
+	get id() {
+		return this.#id
 	}
 
 	constructor(cfg = {}) {
@@ -87,8 +92,10 @@ export class Client {
 		}
 	}
 
-	#wsClose = () =>
+	#wsClose = () => {
 		this.onevent?.(events.Disconnected)
+		this.#id = undefined
+	}
 
 	#wsError = err =>
 		this.onerror?.(err)
@@ -108,6 +115,9 @@ export class Client {
 
 		switch (type) {
 			case types.Event:
+				if (method === events.Connected) {
+					this.#id = args[0]
+				}
 				return this.onevent?.(method, ...args)
 
 			case types.Response:

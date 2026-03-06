@@ -18,6 +18,7 @@ export class Client {
 	onerror?: OnError
 
 	readonly connected: boolean
+	readonly id: string
 
 	connect(): Promise<this>
 	close: wscl.Client['close']
