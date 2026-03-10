@@ -1,4 +1,5 @@
 import * as wscl from 'wscl'
+import * as is from 'istp'
 import {
 	types, msgParse, rpcNew, eventNew, protocol, encoderName, batch, events,
 } from '@ws-rpc/proto'
@@ -103,14 +104,19 @@ export class Client {
 	#wsMessage = async msg => {
 		try {
 			msg = await this.#encoder.decode(msg)
-			await batch(msg, msgs => msgs.forEach(this.#msg))
+			await batch(msg, async msgs => {
+				let res = await Promise.allSettled(msgs.map(this.#msg))
+				res
+					.filter(r => r.status === 'rejected')
+					.forEach(r => this.onerror?.(r.reason))
+			})
 		}
 		catch (e) {
 			this.onerror?.(e)
 		}
 	}
 
-	#msg = msg => {
+	#msg = async msg => {
 		let {type, id, method, args, result, error} = msgParse(msg)
 
 		switch (type) {
