@@ -185,11 +185,10 @@ export class Server {
 
 		if (type === types.Event) {
 			try {
-				this.onevent?.(ctx, method, ...args)
+				await this.onevent?.(ctx, method, ...args)
 			}
-				// we should not throw if event handler failed
-			catch {
-			}
+			// we should not throw if event handler failed
+			catch {}
 			return
 		}
 
