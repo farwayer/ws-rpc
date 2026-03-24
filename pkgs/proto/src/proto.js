@@ -50,7 +50,7 @@ export let batch = async (items, fn, maxBatch) => {
 		items = await fn(items)
 	}
 	catch {
-		e.throwInternalError("processing failed")
+		e.throwInternalError(null, "processing failed")
 	}
 
 	if (!items?.length) return
