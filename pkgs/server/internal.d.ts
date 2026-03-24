@@ -1,1 +1,1 @@
-export const $InternalSuppressRpcResponse: Symbol
+export declare const $InternalSuppressRpcResponse: unique symbol

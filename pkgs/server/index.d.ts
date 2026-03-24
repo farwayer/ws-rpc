@@ -37,7 +37,7 @@ export type OnEvent<
 	ctx: Context<C, Ctx>,
 	event: string,
 	...args: Args,
-) => void
+) => void | Promise<void>
 
 export type OnConnected<C extends Client = Client> = (
 	client: C,
@@ -68,7 +68,7 @@ export class Server<
 
 	onrpc?: OnRpc<C, Ctx>
 	onevent?: OnEvent<C, Ctx>
-	onconnect?: OnConnected<C>
+	onconnected?: OnConnected<C>
 	ctx: Ctx
 
 	readonly clientIds: IterableIterator<string>
@@ -96,9 +96,12 @@ export function throwRpcError(error: proto.RpcError): never
 
 export function throwMethodNotFound(id: proto.Id, method: string): never
 
-export interface SendError extends Error {}
-export interface EncoderError extends Error {}
-export interface RpcError extends Error {}
-export interface SendError extends Error, proto.ErrorMessage {}
+export class SendError extends Error {}
+export class EncoderError extends Error {}
+export class RpcError extends Error {
+	code: number
+	message: string
+	data?: any
+}
 
 export {events}

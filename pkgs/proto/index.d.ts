@@ -27,11 +27,10 @@ export interface Encoder {
 	name: string
 
 	encode(msg: Message | Message[]): string | ArrayBuffer
-
 	decode(data: ArrayBuffer): Message | Message[]
 }
 
-declare namespace errors {
+export declare namespace errors {
 	export function parseError(data?: any): ErrorMessage
 	export function invalidRequest(id: Id | null, data?: any): ErrorMessage
 	export function methodNotFound(id: Id, data?: any): ErrorMessage
@@ -39,12 +38,12 @@ declare namespace errors {
 	export function internalError(id?: Id | null, data?: any): ErrorMessage
 }
 
-declare namespace events {
+export declare namespace events {
 	const Connected: 'jsonrpc.connected'
 	const Disconnected: 'jsonrpc.disconnected'
 }
 
-declare namespace types {
+export declare namespace types {
 	export const Request: 1
 	export const Response: 2
 	export const Event: 3
@@ -61,15 +60,15 @@ export function errNew(
 export function eventNew(method: string, args: any[]): Message
 export function rpcNew(id: Id, method: string, args: any[]): Message
 export function resNew(id: Id, result?: any): Message
-export function encoderName(protocol: string): string
+export function encoderName(protocol: string | undefined): string | undefined
 export function protocol(encoderName: string): string
-export function batch(
-	items: object,
-	fn: (items: any[]) => any, // TODO
+export function batch<T>(
+	items: T | T[],
+	fn: (items: T[]) => T[] | Promise<T[]>,
 	maxBatch?: number,
-): Promise<any>
+): Promise<T | T[] | undefined>
 
-export function msgParse(msg: Message):
+export function msgParse(msg: object):
 	{type: typeof types.Request, id: Id, method: string, args: any[]} |
 	{type: typeof types.Response, id: Id, result: any} |
 	{type: typeof types.Event, method: string, args: any[]} |
