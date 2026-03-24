@@ -26,7 +26,8 @@ export class WSServer extends WebSocketServer {
 	#checkClients = () => {
 		for (let ws of this.clients) {
 			if (!ws.alive) {
-				return ws.terminate()
+				ws.terminate()
+				continue
 			}
 
 			ws.alive = false
