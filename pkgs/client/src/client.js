@@ -1,5 +1,4 @@
 import * as wscl from 'wscl'
-import * as is from 'istp'
 import {
 	types, msgParse, rpcNew, eventNew, protocol, encoderName, batch, events,
 } from '@ws-rpc/proto'
@@ -65,7 +64,7 @@ export class Client {
 	}
 
 	async rpc(method, ...args) {
-		let id = ++this.#callId
+		let id = this.#callId = (this.#callId % Number.MAX_SAFE_INTEGER) + 1
 		let msg = rpcNew(id, method, args)
 
 		return this.#call(msg)
