@@ -22,7 +22,7 @@
     "@ws-rpc/proto": "workspace:*",
     "bufferutil": "^4.1.0",
     "istp": "^2.0.6",
-    "ws": "^8.19.0"
+    "ws": "^8.20.0"
   },
   "keywords": [
     "rpc",
