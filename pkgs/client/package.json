@@ -19,8 +19,8 @@
     "wscl": "^2.2.0"
   },
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^12.0.0",
-    "size-limit": "^12.0.0"
+    "@size-limit/preset-small-lib": "^12.0.1",
+    "size-limit": "^12.0.1"
   },
   "size-limit": [
     {
