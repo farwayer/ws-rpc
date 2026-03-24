@@ -174,13 +174,13 @@ export class Server {
 		}
 
 		let ctx = {
+			...this.ctx,
 			client,
 			wss: this,
 			emit: this.emit.bind(this, client.id),
 			emitAll: this.emitAll.bind(this),
 			throw: throwRpcError,
 			throwMethodNotFound: () => throwMethodNotFound(id, method),
-			...this.ctx,
 		}
 
 		if (type === types.Event) {
@@ -228,7 +228,7 @@ export class Server {
 			if (e instanceof EncoderError) {
 				let resp = errors.internalError(null, "encoding failed")
 				let opts = {encoder: JsonEncoder}
-				await send(client, resp, opts)
+				return send(client, resp, opts)
 			}
 
 			throw e
